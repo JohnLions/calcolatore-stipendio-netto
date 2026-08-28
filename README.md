@@ -10,8 +10,9 @@ nessuna dipendenza, nessun build step.
 
 Inserisci una RAL e ottieni netto annuale, netto mensile e il totale delle
 trattenute, separando le **imposte** dai **contributi previdenziali**. La scheda
-*Metodo, fonti e limiti* documenta ogni passaggio e ogni semplificazione; la
-scheda *Cosa aggiungere* elenca le estensioni possibili.
+*Metodo, fonti e assunzioni* documenta il calcolo, il caso modellato e i suoi
+limiti; *Approfondimenti* raccoglie le spiegazioni di dominio e le estensioni
+possibili.
 
 ---
 
@@ -52,7 +53,7 @@ calc/
   mensilita.js          Ripartizione del netto annuo sulle mensilità
   calcola-netto.js      Orchestrazione della pipeline (nessuna costante qui)
 ui/
-  index.html            Tre schede: calcolatore, metodo e fonti, cosa aggiungere
+  index.html            Tre schede: calcolatore, metodo e assunzioni, approfondimenti
   app.js                Rendering (importa gli stessi moduli dei test)
   style.css
 tests/
