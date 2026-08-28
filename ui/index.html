@@ -29,18 +29,20 @@
     <form id="form-ral" class="pannello">
         <label for="ral">Retribuzione annua lorda (RAL)</label>
         <div class="campo">
-          <input
-            type="number"
-            id="ral"
-            name="ral"
-            value="35000"
-            min="0"
-            step="100"
-            inputmode="decimal"
-            required
-            aria-describedby="errore"
-          >
-          <span class="valuta" aria-hidden="true">€</span>
+          <span class="campo-input">
+            <span class="valuta" aria-hidden="true">€</span>
+            <input
+              type="number"
+              id="ral"
+              name="ral"
+              value="35000"
+              min="0"
+              step="100"
+              inputmode="decimal"
+              required
+              aria-describedby="errore"
+            >
+          </span>
           <button type="submit">Calcola</button>
         </div>
         <label for="mensilita" class="secondaria">Mensilità contrattuali</label>
