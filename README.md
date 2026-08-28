@@ -321,6 +321,19 @@ tassate a secco.
 **Semplificazione dichiarata:** le addizionali sono ripartite sulle 12 mensilità
 ordinarie; nella realtà sono trattenute in 11 rate.
 
+### Un limite di impianto
+
+Il calcolatore ragiona **per anno** e poi ripartisce sulle mensilità. Una busta
+paga reale fa il contrario: calcola mese per mese su una proiezione annuale, e a
+dicembre esegue il **conguaglio** che riallinea tutto.
+
+Per il netto annuale e per la differenza fra mensilità ordinaria e aggiuntiva
+l'approccio annuale è corretto e più semplice. Ma per riprodurre *il cedolino di
+un mese specifico* — con ratei, conguagli progressivi e variazioni in corso
+d'anno — non basterebbe aggiungere codice: andrebbe invertito il verso del
+calcolo. È l'unico limite di questo prototipo che non si supera aggiungendo
+funzionalità.
+
 ---
 
 ## Le discontinuità del netto
