@@ -60,8 +60,8 @@ function righe(r) {
       voce: 'Cuneo fiscale — detrazione',
       nota:
         'L. 199/2025 · 1.000€ pieni fino a 32.000€, poi decrescente fino a ' +
-        '40.000€. Sotto i 20.000€ il cuneo non è una detrazione: diventa la ' +
-        'somma esente qui sotto',
+        '40.000€. Sotto i 20.000€ il cuneo cambia forma: non è una detrazione ' +
+        'ma una somma esente che si aggiunge al netto',
       valore: -r.cuneoDetrazione,
       nascondi: r.cuneoDetrazione === 0 && r.cuneoSommaEsente > 0,
     },
