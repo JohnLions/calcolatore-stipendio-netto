@@ -1,0 +1,11 @@
+{
+  "name": "jethr-calcolatore-netto",
+  "version": "1.0.0",
+  "description": "Calcolatore RAL -> netto annuale/mensile — prototipo V1 (Italia, 2026)",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "start": "node --version >/dev/null && npx --yes serve ui"
+  }
+}

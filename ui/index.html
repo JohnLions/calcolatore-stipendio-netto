@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calcolatore RAL → Netto · Prototipo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <header class="intestazione">
+      <h1>Da RAL a netto in busta</h1>
+      <p class="sottotitolo">
+        Impiegato a tempo indeterminato, residente a Milano, nessun familiare
+        a carico, nessuna agevolazione, anno intero lavorato.
+      </p>
+    </header>
+
+    <div class="tabs" role="tablist" aria-label="Sezioni">
+      <button role="tab" id="tab-calcolatore" aria-controls="pannello-calcolatore"
+              aria-selected="true" class="tab attiva">Calcolatore</button>
+      <button role="tab" id="tab-metodo" aria-controls="pannello-metodo"
+              aria-selected="false" class="tab">Metodo, fonti e limiti</button>
+      <button role="tab" id="tab-estensioni" aria-controls="pannello-estensioni"
+              aria-selected="false" class="tab">Come si amplia</button>
+    </div>
+
+    <div id="pannello-calcolatore" role="tabpanel" aria-labelledby="tab-calcolatore">
+    <form id="form-ral" class="pannello">
+        <label for="ral">Retribuzione annua lorda (RAL)</label>
+        <div class="campo">
+          <input
+            type="number"
+            id="ral"
+            name="ral"
+            value="35000"
+            min="0"
+            step="100"
+            inputmode="decimal"
+            required
+            aria-describedby="errore"
+          >
+          <span class="valuta" aria-hidden="true">€</span>
+          <button type="submit">Calcola</button>
+        </div>
+        <label for="mensilita" class="secondaria">Mensilità contrattuali</label>
+        <select id="mensilita" name="mensilita">
+          <option value="12">12 mensilità</option>
+          <option value="13" selected>13 mensilità</option>
+          <option value="14">14 mensilità</option>
+        </select>
+        <p class="aiuto">
+          Non cambiano il netto annuale, solo come viene distribuito — e la
+          distribuzione non è uniforme.
+        </p>
+
+        <p id="errore" class="errore" role="alert" hidden></p>
+      </form>
+
+      <section id="risultato" class="pannello" aria-live="polite" hidden></section>
+
+    </div>
+
+    <div id="pannello-metodo" role="tabpanel" aria-labelledby="tab-metodo" hidden>
+      <section class="pannello prosa">
+
+        <details class="scheda" open>
+          <summary>Metodo di calcolo</summary>
+          <div class="scheda-corpo">
+            <p>
+              Dalla RAL si sottraggono i <strong>contributi INPS a carico del
+              dipendente</strong>: 9,19% fino a 56.224 €, 10,19% sulla quota fino
+              al massimale di 122.295 €, nulla oltre. Quel che resta è
+              l’<strong>imponibile fiscale</strong>, base di calcolo sia
+              dell’IRPEF sia delle addizionali.
+            </p>
+            <p>
+              Sui contributi non si paga IRPEF: l’art. 51, c. 2, lett. a) del
+              TUIR stabilisce che i contributi previdenziali obbligatori
+              <strong>non concorrono a formare il reddito</strong> di lavoro
+              dipendente. Non sono quindi “oneri deducibili” in senso tecnico —
+              semplicemente non entrano mai nell’imponibile, e senza alcun tetto.
+            </p>
+            <p>
+              Il <strong>9,19%</strong> è l’aliquota IVS a carico del lavoratore
+              per il Fondo Pensioni Lavoratori Dipendenti del settore privato.
+              Non è una media: a variare non è il CCNL — Commercio,
+              Metalmeccanici e Chimici versano tutti la stessa IVS — ma la
+              <strong>categoria di lavoratore</strong>, perché le aliquote le
+              fissa la legge. Un apprendista versa il 5,84%; dipendenti pubblici,
+              dirigenti, agricoli e lavoratori dello spettacolo hanno gestioni e
+              aliquote proprie.
+            </p>
+            <p>
+              Resta fuori dal calcolo la quota a carico del <strong>datore di
+              lavoro</strong>, che è molto più alta — attorno al 30% — ed è lì
+              che contano davvero settore, dimensione aziendale, inquadramento e
+              rischio INAIL.
+            </p>
+            <p>
+              Sull’imponibile si calcola l’<strong>IRPEF lorda</strong> per
+              scaglioni (23% / 33% / 43%), da cui si sottraggono la
+              <strong>detrazione da lavoro dipendente</strong> (art. 13 TUIR) e,
+              sopra i 20.000 €, la <strong>detrazione del cuneo fiscale</strong>.
+              Il risultato, mai negativo, è l’<strong>IRPEF netta</strong>.
+            </p>
+            <p>
+              Le <strong>addizionali</strong> regionale e comunale si calcolano
+              sull’imponibile <em>prima</em> delle detrazioni: non sono ridotte
+              dalla detrazione per lavoro dipendente. Fino a 20.000 € si aggiunge
+              infine la <strong>somma esente del cuneo</strong>, che non è una
+              detrazione ma un importo non tassato che si somma al netto, e il
+              <strong>trattamento integrativo</strong>, un credito fino a 1.200 €
+              per imponibili sotto i 15.000 €. I due si cumulano: non sono
+              alternativi.
+            </p>
+            <pre class="codice"><code>netto = imponibile − IRPEF netta − addizionali
+        + somma esente cuneo + trattamento integrativo</code></pre>
+          </div>
+        </details>
+
+        <details class="scheda">
+          <summary>Assunzioni</summary>
+          <div class="scheda-corpo">
+            <ul>
+              <li>Impiegato a tempo indeterminato, residente a Milano, anno intero lavorato.</li>
+              <li>Nessun familiare a carico, nessuna agevolazione personale.</li>
+              <li><strong>Mensilità selezionabili</strong> fra 12, 13 e 14: nella realtà il numero dipende dal CCNL. Le 14 sono previste da Commercio, Turismo, Credito, Assicurazioni, Chimici e Alimentari.</li>
+              <li>Le addizionali sono ripartite sulle 12 mensilità ordinarie; nella realtà sono trattenute in 11 rate.</li>
+              <li>Nessun CCNL modellato: solo parametri fiscali e contributivi nazionali 2026.</li>
+              <li>La RAL coincide con la base contributiva e non contiene benefit o welfare.</li>
+              <li>Addizionali calcolate <em>a regime</em>, non col meccanismo reale “a rata” sull’anno successivo.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="scheda">
+          <summary>Cosa non è incluso</summary>
+          <div class="scheda-corpo">
+            <ul>
+              <li><strong>Trattamento integrativo nella fascia 15.000–28.000 €.</strong> La norma lo riconosce se la <em>somma</em> delle detrazioni (familiari a carico, lavoro dipendente, mutuo prima casa ante 2022) supera l’imposta lorda. Nel profilo modellato esiste la sola detrazione da lavoro dipendente, che sopra i 15.000 € non supera mai l’imposta lorda: in V1 il credito in quella fascia è quindi sempre zero. Con familiari a carico potrebbe invece spettare.</li>
+              <li><strong>Agevolazioni mirate 2026</strong> (L. 199/2025): imposta sostitutiva al 15% su lavoro notturno, festivo e a turni; detassazione degli incrementi contrattuali. Richiedono il dettaglio del cedolino, non sono ricavabili dalla sola RAL.</li>
+              <li>Detrazioni per familiari a carico, oneri detraibili, mutuo prima casa.</li>
+              <li>Maggiorazione di 65 € della detrazione nella fascia 25–35k; tetto alle detrazioni oltre 75k / 200k.</li>
+              <li>Premi di risultato, welfare aziendale, fringe benefit, buoni pasto, straordinari.</li>
+              <li>Il TFR è mostrato come voce informativa, ma è accantonato e non entra nel netto.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="scheda">
+          <summary>Fonti</summary>
+          <div class="scheda-corpo">
+            <ul class="fonti">
+              <li>
+                <a href="https://www.brocardi.it/testo-unico-imposte-redditi/titolo-i/capo-i/art13.html" target="_blank" rel="noopener noreferrer">Art. 13 TUIR — detrazioni da lavoro dipendente</a>
+                <span class="nota">Testo verificato alla lettera: 1.955 € fino a 15.000 €, poi 1.910 + 1.190 × (28.000 − R) / 13.000.</span>
+              </li>
+              <li>
+                <a href="https://www1.finanze.gov.it/finanze2/dipartimentopolitichefiscali/fiscalitalocale/addregirpef/addregirpef.php?reg=10" target="_blank" rel="noopener noreferrer">MEF — addizionale regionale Lombardia</a>
+                <span class="nota">Progressiva per scaglioni: 1,23% / 1,58% / 1,72% / 1,73%. Art. 72, c. 1, L.R. 10/2003.</span>
+              </li>
+              <li>
+                <a href="https://www.tuttocalcolo.it/addizionale-irpef/lombardia/milano" target="_blank" rel="noopener noreferrer">Addizionale comunale Milano</a>
+                <span class="nota">Aliquota unica 0,80% sull’intero imponibile, esenzione fino a 23.000 €.</span>
+              </li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="scheda">
+          <summary>Riferimenti normativi</summary>
+          <div class="scheda-corpo">
+            <ul>
+              <li><strong>D.P.R. 917/1986 (TUIR)</strong> — IRPEF, scaglioni, detrazioni (art. 13), esclusione dei contributi dal reddito (art. 51).</li>
+              <li><strong>L. 199/2025</strong> (bilancio 2026) — secondo scaglione IRPEF ridotto dal 35% al 33%; cuneo fiscale reso strutturale.</li>
+              <li><strong>L. 207/2024</strong> (bilancio 2025) — introduce il cuneo nella forma attuale: somma esente fino a 20.000 €, detrazione tra 20.000 e 40.000 €.</li>
+              <li><strong>D.L. 3/2020</strong>, mod. L. 234/2021 — trattamento integrativo.</li>
+              <li><strong>L. 438/1992, art. 3-ter</strong> — aliquota aggiuntiva INPS dell’1%.</li>
+              <li><strong>L.R. Lombardia 10/2003, art. 72</strong> — addizionale regionale.</li>
+              <li><strong>Art. 2120 c.c.</strong> — accantonamento TFR.</li>
+            </ul>
+          </div>
+        </details>
+
+        <h2 class="titolo-gruppo">Approfondimenti</h2>
+
+        <details class="scheda">
+          <summary>Quali sono i testi ufficiali</summary>
+          <div class="scheda-corpo">
+            <p>
+              Le fonti di questo dominio stanno su cinque livelli, e sapere quale
+              guardare fa risparmiare parecchio tempo.
+            </p>
+
+            <p class="sotto-titolo">1 · La legge base — il TUIR</p>
+            <p class="nota-blocco">
+              <strong>D.P.R. 917/1986</strong>, Testo Unico delle Imposte sui
+              Redditi. È il testo di riferimento per tutto ciò che riguarda
+              l’IRPEF, e cambia poco: quello che cambia sono gli importi, scritti
+              altrove. Gli articoli che contano qui:
+            </p>
+            <ul>
+              <li><strong>Art. 12</strong> — detrazioni per carichi di famiglia (coniuge, figli, altri familiari).</li>
+              <li><strong>Art. 13</strong> — detrazioni per redditi da lavoro dipendente e assimilati.</li>
+              <li><strong>Art. 51</strong> — cosa forma il reddito di lavoro dipendente, e cosa ne resta fuori: è qui che i contributi previdenziali vengono esclusi dall’imponibile.</li>
+              <li><strong>Artt. 11 e 13</strong> — scaglioni e aliquote IRPEF.</li>
+            </ul>
+
+            <p class="sotto-titolo">2 · Le modifiche annuali — le leggi di bilancio</p>
+            <p class="nota-blocco">
+              Ogni anno riscrivono pezzi del TUIR o introducono misure a termine.
+              Sono la prima cosa da controllare, perché il TUIR pubblicato online
+              non sempre è aggiornato all’ultima manovra.
+            </p>
+            <ul>
+              <li><strong>L. 199/2025</strong> (bilancio 2026) — porta il secondo scaglione IRPEF dal 35% al 33% e rende strutturale il cuneo fiscale.</li>
+              <li><strong>L. 207/2024</strong> (bilancio 2025) — introduce il cuneo nella forma attuale e riscrive l’art. 12 sui familiari a carico.</li>
+              <li><strong>D.Lgs. 216/2023</strong> — riscrive la detrazione da lavoro dipendente dell’art. 13.</li>
+            </ul>
+
+            <p class="sotto-titolo">3 · Gli importi operativi — le circolari</p>
+            <p class="nota-blocco">
+              La legge fissa il meccanismo, le circolari fissano i numeri
+              dell’anno. Senza queste non si calcola nulla.
+            </p>
+            <ul>
+              <li><strong>Circolari INPS</strong> — pubblicate a inizio anno, contengono aliquote contributive, minimali, massimale annuo e la soglia dell’aliquota aggiuntiva dell’1%.</li>
+              <li><strong>Circolari e risoluzioni dell’Agenzia delle Entrate</strong> — interpretano i casi dubbi e spiegano come applicare le novità. Utili soprattutto quando una misura nuova interagisce con una vecchia.</li>
+            </ul>
+
+            <p class="sotto-titolo">4 · Le fonti locali — addizionali</p>
+            <p class="nota-blocco">
+              Le addizionali non stanno nel TUIR: le decidono Regioni e Comuni,
+              ciascuno con un proprio atto.
+            </p>
+            <ul>
+              <li><strong>Portale del Federalismo Fiscale (MEF)</strong> — è l’aggregatore ufficiale: raccoglie aliquote regionali e comunali di tutti gli enti, con l’atto che le ha stabilite. È la fonte da usare, non i siti dei singoli comuni.</li>
+              <li><strong>Leggi regionali</strong> — fissano l’addizionale regionale. Per la Lombardia è l’art. 72 della L.R. 10/2003.</li>
+              <li><strong>Delibere comunali</strong> — fissano aliquota e soglia di esenzione dell’addizionale comunale.</li>
+            </ul>
+
+            <p class="sotto-titolo">5 · Il contratto — i CCNL</p>
+            <p class="nota-blocco">
+              Non sono fonti fiscali e non toccano aliquote né detrazioni.
+              Stabiliscono retribuzione minima, livelli, numero di mensilità ed
+              eventuali contribuzioni contrattuali. Un calcolo fiscale corretto
+              non ne ha bisogno; una busta paga reale sì.
+            </p>
+
+            <p>
+              Fuori da questi cinque livelli resta il <strong>codice civile</strong>,
+              che con l’art. 2120 regola l’accantonamento del TFR.
+            </p>
+          </div>
+        </details>
+
+        <details class="scheda">
+          <summary>Perché la tredicesima è più bassa</summary>
+          <div class="scheda-corpo">
+            <p>
+              Le mensilità non cambiano il netto annuale: cambiano solo come
+              viene distribuito. Ma <strong>non lo distribuiscono in parti
+              uguali</strong>.
+            </p>
+            <p>
+              Detrazioni e crediti sono <strong>importi annui che il datore
+              spalma sulle dodici buste ordinarie</strong>. Quando arriva la
+              tredicesima, quegli importi sono già stati distribuiti tutti: non
+              ne resta una quota da assegnarle. In più la tredicesima si somma in
+              cima al reddito annuo, quindi quella fetta finisce nello scaglione
+              più alto che raggiungi e sconta l’<strong>aliquota
+              marginale</strong>, non quella media.
+            </p>
+            <p>Su una RAL di 35.000 € con 13 mensilità:</p>
+            <table class="mini">
+              <thead>
+                <tr><th>Voce</th><th>Ordinaria</th><th>Tredicesima</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Lordo</td><td class="importo">2.692,31 €</td><td class="importo">2.692,31 €</td></tr>
+                <tr><td>Contributi</td><td class="importo negativo">−247,42 €</td><td class="importo negativo">−247,42 €</td></tr>
+                <tr><td>IRPEF</td><td class="importo negativo">−573,48 €</td><td class="importo negativo">−806,81 €</td></tr>
+                <tr><td>Detrazioni, cuneo e addizionali</td><td class="importo">+156,02 €</td><td class="importo">—</td></tr>
+                <tr><td><strong>Netto</strong></td><td class="importo"><strong>2.027,43 €</strong></td><td class="importo"><strong>1.638,07 €</strong></td></tr>
+              </tbody>
+            </table>
+            <p>
+              Il lordo è identico, il netto no: <strong>−19,2%</strong>. L’IRPEF
+              della tredicesima è più alta perché la sua fetta cade nello
+              scaglione al 33%, mentre l’aliquota media su questo reddito è del
+              24,2%.
+            </p>
+            <p>
+              Il totale annuo però non cambia: 12 × 2.027,43 + 1.638,07 = 25.967 €,
+              esattamente il netto annuale. Il modello è uniforme per 13 e 14
+              mensilità — dodici ordinarie portano tutti i crediti, le restanti
+              sono tassate a secco.
+            </p>
+          </div>
+        </details>
+
+        <details class="scheda">
+          <summary>Le tre zone trappola</summary>
+          <div class="scheda-corpo">
+            <p>
+              Il netto <strong>non</strong> cresce sempre al crescere della RAL.
+              Tre soglie funzionano “a scalino”: superarle cambia il trattamento
+              dell’intero importo, non solo dell’eccedenza. Dentro queste fasce
+              il calcolatore lo segnala.
+            </p>
+            <table class="mini">
+              <thead><tr><th>Fascia di RAL</th><th>Calo</th><th>Causa</th></tr></thead>
+              <tbody>
+                <tr><td>9.361 – 9.567 €</td><td class="importo negativo">−152,22 €</td>
+                    <td>La somma esente del cuneo scende dal 7,1% al 5,3% dell’intero reddito, superati 8.500 € di imponibile</td></tr>
+                <tr><td>16.519 – 16.719 €</td><td class="importo negativo">−129,36 €</td>
+                    <td>Il trattamento integrativo di 1.200 € decade, superati 15.000 € di imponibile. Il salto della detrazione art. 13 (+1.145 €) ne assorbe quasi tutto l’effetto, ma non del tutto</td></tr>
+                <tr><td>25.328 – 25.636 €</td><td class="importo negativo">−183,40 €</td>
+                    <td>L’addizionale comunale di Milano si attiva sull’intero imponibile, superati 23.000 € (è una soglia, non una franchigia)</td></tr>
+              </tbody>
+            </table>
+            <p>
+              <strong>Soglia</strong> e <strong>franchigia</strong> non sono la
+              stessa cosa. Con una franchigia pagheresti solo sull’eccedenza; con
+              una soglia, una volta superata, paghi su tutto. A Milano con 23.001 €
+              di imponibile l’addizionale non è lo 0,80% di 1 €, ma lo 0,80% di
+              23.001 €: <strong>184,01 €</strong>. Da zero a 184 € per un euro di
+              reddito in più.
+            </p>
+          </div>
+        </details>
+
+        <details class="scheda">
+          <summary>Detrazione da lavoro dipendente: come si calcola</summary>
+          <div class="scheda-corpo">
+            <p>
+              È una detrazione: si sottrae dall’<em>imposta</em>, non dal reddito.
+              Decresce al crescere del reddito fino ad azzerarsi a 50.000 €.
+              Formula a fasce sull’imponibile fiscale (art. 13, c. 1 TUIR):
+            </p>
+            <pre class="codice"><code>R ≤ 15.000        →  1.955 fissi
+15.000 &lt; R ≤ 28.000  →  1.910 + 1.190 × (28.000 − R) / 13.000
+28.000 &lt; R ≤ 50.000  →  1.910 × (50.000 − R) / 22.000
+R &gt; 50.000        →  0</code></pre>
+            <p>
+              <strong>C’è un salto a 15.000 €, ed è nella norma.</strong> La prima
+              fascia dà 1.955 €; la seconda, valutata appena sopra la soglia, dà
+              1.910 + 1.190 × (13.000 / 13.000) = <strong>3.100 €</strong>. Una
+              discontinuità di +1.145 € nella detrazione. Il salto è verso l’alto
+              e non produce una zona trappola: attraversando i 15.000 € il netto
+              aumenta più del lordo. Serve anzi ad assorbire la decadenza del
+              trattamento integrativo, che avviene esattamente alla stessa soglia.
+            </p>
+            <p>
+              L’art. 13 prevede anche un minimo garantito di 690 €, che in questo
+              modello non ha mai effetto: rileva solo quando la detrazione è
+              ragguagliata ai giorni di lavoro, e qui l’anno è sempre intero.
+            </p>
+          </div>
+        </details>
+
+        <details class="scheda">
+          <summary>Come funziona il taglio del cuneo fiscale</summary>
+          <div class="scheda-corpo">
+            <p>
+              Il cuneo non è una misura sola: sono <strong>due meccanismi
+              distinti</strong>, che agiscono in punti opposti della busta paga e
+              si escludono a vicenda.
+            </p>
+            <p class="sotto-titolo">Fino a 20.000 € — <strong>somma esente</strong></p>
+            <p class="nota-blocco">
+              Si <strong>aggiunge al netto</strong>: non riduce l’imposta e non
+              concorre a formare il reddito.
+            </p>
+            <table class="mini">
+              <thead><tr><th>Imponibile</th><th>Importo</th></tr></thead>
+              <tbody>
+                <tr><td class="senza-acapo">fino a 8.500 €</td><td>7,1% dell’intero imponibile</td></tr>
+                <tr><td class="senza-acapo">8.500 – 15.000 €</td><td>5,3% dell’intero imponibile</td></tr>
+                <tr><td class="senza-acapo">15.000 – 20.000 €</td><td>4,8% dell’intero imponibile</td></tr>
+              </tbody>
+            </table>
+
+            <p class="sotto-titolo">Oltre 20.000 € — <strong>detrazione</strong></p>
+            <p class="nota-blocco">
+              Si <strong>sottrae dall’imposta</strong> lorda, come una detrazione
+              qualsiasi.
+            </p>
+            <table class="mini">
+              <thead><tr><th>Imponibile</th><th>Importo</th></tr></thead>
+              <tbody>
+                <tr><td class="senza-acapo">20.000 – 32.000 €</td><td>1.000 € pieni</td></tr>
+                <tr><td class="senza-acapo">32.000 – 40.000 €</td><td>1.000 × (40.000 − R) / 8.000, fino a zero</td></tr>
+              </tbody>
+            </table>
+            <p>
+              <strong>Perché due forme diverse.</strong> Sotto i 20.000 € una
+              detrazione varrebbe <em>zero</em>: su 8.500 € di reddito l’IRPEF
+              lorda è 1.955 € e la detrazione da lavoro dipendente è già 1.955 €.
+              La capienza residua è nulla, e qualunque detrazione in più andrebbe
+              interamente persa. Per questo il legislatore ha scelto la somma
+              esente, che arriva in busta a prescindere dall’imposta dovuta.
+            </p>
+            <p>
+              Le fasce della somma esente sono <strong>a scalino, non
+              marginali</strong>: la percentuale si applica all’intero reddito,
+              non alla sola quota nella fascia. È ciò che genera la prima zona
+              trappola, a 8.500 € di imponibile.
+            </p>
+            <p>
+              Il cuneo si <strong>cumula</strong> con il trattamento integrativo:
+              operano su piani diversi e non sono alternativi.
+            </p>
+          </div>
+        </details>
+
+      </section>
+    </div>
+
+    <div id="pannello-estensioni" role="tabpanel" aria-labelledby="tab-estensioni" hidden>
+      <section class="pannello prosa">
+        <h2>Due strade</h2>
+        <p>
+          Per ampliare il calcolatore si possono <strong>aggiungere dati</strong>
+          a un motore che già li regge, oppure <strong>integrare nuovi
+          elementi</strong> che il modello oggi non conosce. La prima strada è
+          raccolta e manutenzione, la seconda è modellazione.
+        </p>
+
+        <h2>Estensioni di dati</h2>
+        <ol>
+          <li>
+            <strong>Addizionali di tutte le regioni e comuni.</strong> Una
+            tabella per ente, con l’indicazione del modello che usa fra i tre
+            esistenti:
+            <ul>
+              <li><strong>Aliquota unica</strong> sull’intero imponibile — Comune di Milano, 0,80%.</li>
+              <li><strong>Scaglioni progressivi</strong>, sul modello IRPEF: ogni aliquota vale solo sulla quota di reddito nel proprio scaglione — Regione Lombardia.</li>
+              <li><strong>Soglia di esenzione</strong>: sotto soglia non si paga nulla, sopra si paga sull’intero imponibile — ancora Milano, soglia a 23.000 €.</li>
+            </ul>
+          </li>
+          <li>
+            <strong>Aliquote contributive per categoria.</strong> Apprendistato
+            al 5,84%, dirigenti, dipendenti pubblici, agricoli, spettacolo:
+            ciascuna gestione ha la propria.
+          </li>
+          <li>
+            <strong>Parametri annuali.</strong> Massimale, soglia dell’aliquota
+            aggiuntiva e importi delle detrazioni cambiano ogni anno con la legge
+            di bilancio e le circolari INPS.
+          </li>
+        </ol>
+        <p>
+          Il prototipo implementa già tutti e tre i modelli di addizionale. Il
+          motore degli scaglioni non conosce la Lombardia: cammina su una lista
+          di soglie e aliquote, e va bene qualunque lista.
+        </p>
+        <pre class="codice"><code>export const ADDIZIONALE_REGIONALE_LOMBARDIA_SCAGLIONI = [
+  { fino: 15000,    aliquota: 0.0123 },
+  { fino: 28000,    aliquota: 0.0158 },
+  { fino: 50000,    aliquota: 0.0172 },
+  { fino: Infinity, aliquota: 0.0173 },
+];</code></pre>
+        <p>
+          Aggiungere una regione significa aggiungere una tabella come questa:
+          nessuna logica da riscrivere. Si verifica aprendo
+          <code>calc/addizionali-2026.js</code>.
+        </p>
+        <p>
+          Mancano i <strong>dati</strong>: 20 regioni e circa 7.900 comuni,
+          pubblicati dal MEF. È raccolta e manutenzione annuale, ed è fuori dal
+          prototipo per scelta — una tabella di settemila righe non verificate
+          rende il calcolatore più ampio ma meno affidabile, perché un errore in
+          una riga qualsiasi produce un risultato sbagliato che non si può
+          notare.
+        </p>
+
+        <h2>Estensioni di modello</h2>
+        <p>Richiedono di insegnare al calcolatore qualcosa che oggi non sa.</p>
+        <ul>
+          <li>
+            <strong>Familiari a carico</strong> (art. 12 TUIR). La più laboriosa:
+            la sola detrazione per il coniuge ha otto rami, con cinque
+            maggiorazioni fisse da 10, 20 e 30 € infilate fra 29.000 e 35.200 €
+            di reddito. In più la detrazione per figli esiste oggi <em>solo</em>
+            fra i 21 e i 29 anni: sotto i 21 c’è l’Assegno Unico, che è un
+            beneficio INPS e non una voce fiscale; sopra i 30 la L. 207/2024
+            l’ha abolita per i figli non disabili. Sbloccherebbe il trattamento
+            integrativo nella fascia 15.000–28.000 €, che oggi risulta sempre
+            zero proprio perché manca questa detrazione.
+          </li>
+          <li>
+            <strong>Costo per l’azienda.</strong> Contributi a carico del datore,
+            INAIL, accantonamento TFR: dalla RAL al costo aziendale totale.
+            Cambia il destinatario del calcolo, non la matematica.
+          </li>
+          <li>
+            <strong>Anno parziale.</strong> Oggi assumiamo 365 giorni lavorati.
+            Le detrazioni si ragguagliano ai giorni, e sotto una certa soglia
+            entra in gioco il minimo garantito di 690 € che nel modello attuale
+            non ha mai effetto.
+          </li>
+          <li>
+            <strong>Contratti diversi.</strong> Apprendistato e tempo determinato
+            hanno aliquote contributive proprie. Il modulo INPS è già isolato:
+            servirebbe parametrizzare l’aliquota, non riscrivere il calcolo.
+          </li>
+        </ul>
+
+        <h2>Cosa richiederebbe di ripensare l’impianto</h2>
+        <p>
+          Un solo caso, ed è utile sapere quale. Oggi il calcolatore ragiona
+          <strong>per anno</strong> e poi ripartisce sulle mensilità. Una busta
+          paga vera fa il contrario: calcola mese per mese su una proiezione
+          annuale, e a dicembre esegue il <strong>conguaglio</strong> che
+          riallinea tutto.
+        </p>
+        <p>
+          Finché interessa il netto annuale e la differenza fra mensilità
+          ordinaria e aggiuntiva, l’approccio annuale è corretto e più semplice.
+          Se servisse riprodurre <em>il cedolino di un mese specifico</em> — con
+          ratei, conguagli progressivi e variazioni in corso d’anno — non
+          basterebbe aggiungere codice: andrebbe invertito il verso del calcolo.
+        </p>
+      </section>
+    </div>
+
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

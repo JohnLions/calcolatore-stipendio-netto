@@ -1,0 +1,446 @@
+:root {
+  --sfondo: #f4f5f7;
+  --pannello: #ffffff;
+  --bordo: #e2e5ea;
+  --testo: #14181f;
+  --testo-tenue: #667085;
+  --accento: #1a56db;
+  --negativo: #b42318;
+  --positivo: #027a48;
+  --info: #6941c6;
+  --raggio: 10px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 2.5rem 1.25rem 4rem;
+  background: var(--sfondo);
+  color: var(--testo);
+  font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+main {
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ---------- Intestazione ---------- */
+
+h1 {
+  margin: 0 0 .5rem;
+  font-size: 2rem;
+  line-height: 1.2;
+  letter-spacing: -.02em;
+}
+
+.sottotitolo {
+  margin: 0;
+  max-width: 56ch;
+  color: var(--testo-tenue);
+}
+
+/* ---------- Pannelli ---------- */
+
+.pannello {
+  background: var(--pannello);
+  border: 1px solid var(--bordo);
+  border-radius: var(--raggio);
+  padding: 1.5rem;
+}
+
+/* ---------- Form ---------- */
+
+label {
+  display: block;
+  margin-bottom: .5rem;
+  font-weight: 600;
+  font-size: .9rem;
+}
+
+.campo {
+  display: flex;
+  align-items: stretch;
+  gap: .625rem;
+  position: relative;
+}
+
+input[type="number"] {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: .75rem 2rem .75rem .875rem;
+  font-size: 1.125rem;
+  font-variant-numeric: tabular-nums;
+  color: inherit;
+  background: var(--pannello);
+  border: 1px solid var(--bordo);
+  border-radius: var(--raggio);
+}
+
+input[type="number"]:focus-visible {
+  outline: 2px solid var(--accento);
+  outline-offset: 1px;
+  border-color: var(--accento);
+}
+
+.valuta {
+  position: absolute;
+  left: auto;
+  right: 9.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--testo-tenue);
+  pointer-events: none;
+}
+
+button {
+  flex: 0 0 auto;
+  padding: .75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--accento);
+  border: 0;
+  border-radius: var(--raggio);
+  cursor: pointer;
+}
+
+button:hover { background: #1743ad; }
+button:focus-visible { outline: 2px solid var(--testo); outline-offset: 2px; }
+
+.errore {
+  margin: .75rem 0 0;
+  color: var(--negativo);
+  font-size: .9rem;
+}
+
+/* ---------- Sintesi ---------- */
+
+.sintesi {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: .5rem;
+  margin-bottom: 1.5rem;
+}
+
+.kpi {
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+  padding: 1rem;
+  background: var(--pannello);
+  border: 1px solid var(--bordo);
+  border-radius: var(--raggio);
+}
+
+.kpi-label {
+  font-size: .75rem;
+  color: var(--testo-tenue);
+}
+
+.kpi-valore {
+  font-size: 1.375rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.01em;
+}
+
+/* ---------- Avvisi ---------- */
+
+.avvisi {
+  margin-bottom: 1.5rem;
+  padding: .875rem 1rem;
+  font-size: .875rem;
+  background: #fffaeb;
+  border: 1px solid #fedf89;
+  border-radius: var(--raggio);
+}
+
+.avvisi ul { margin: .5rem 0 0; padding-left: 1.25rem; }
+.avvisi li + li { margin-top: .375rem; }
+
+/* ---------- Tabella di dettaglio ---------- */
+
+.dettaglio {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9375rem;
+}
+
+.dettaglio caption {
+  padding-bottom: .75rem;
+  text-align: left;
+  font-weight: 600;
+}
+
+.dettaglio thead th {
+  padding: .5rem .75rem;
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--testo-tenue);
+  text-align: left;
+  border-bottom: 1px solid var(--bordo);
+}
+
+.dettaglio thead th:last-child { text-align: right; }
+
+.dettaglio tbody th {
+  padding: .625rem .75rem;
+  font-weight: 500;
+  text-align: left;
+  vertical-align: top;
+}
+
+.dettaglio .importo {
+  padding: .625rem .75rem;
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  vertical-align: top;
+}
+
+.nota {
+  display: block;
+  margin-top: .1875rem;
+  font-size: .75rem;
+  font-weight: 400;
+  color: var(--testo-tenue);
+}
+
+.dettaglio tbody tr { border-bottom: 1px solid #f0f2f5; }
+
+tr.sezione th {
+  padding: 1.25rem .75rem .375rem;
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--accento);
+}
+
+tr.sezione { border-bottom: 1px solid var(--bordo) !important; }
+
+.importo.negativo { color: var(--negativo); }
+tr.detrazione .importo { color: var(--positivo); }
+tr.subtotale th, tr.subtotale .importo { font-weight: 600; }
+
+tr.totale {
+  background: #f8fafc;
+}
+
+tr.totale th, tr.totale .importo {
+  font-weight: 700;
+  font-size: 1.0625rem;
+}
+
+tr.info th, tr.info .importo { color: var(--info); }
+
+@media (max-width: 560px) {
+  h1 { font-size: 1.625rem; }
+  .campo { flex-wrap: wrap; }
+  .valuta { display: none; }
+  input[type="number"] { flex-basis: 100%; padding-right: .875rem; }
+  /* Solo il bottone dentro il campo: le tab non devono diventare full-width,
+     altrimenti traboccano dal contenitore flex e si sovrappongono. */
+  .campo button { flex-basis: 100%; }
+  .pannello { padding: 1.125rem; }
+}
+
+/* La somma esente si aggiunge al netto: va distinta dalle trattenute. */
+tr.aggiunta th, tr.aggiunta .importo { color: var(--positivo); font-weight: 600; }
+
+/* ---------- Tab ---------- */
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .25rem;
+  border-bottom: 1px solid var(--bordo);
+}
+
+.tab {
+  padding: .625rem 1rem;
+  font: inherit;
+  font-size: .9375rem;
+  font-weight: 600;
+  color: var(--testo-tenue);
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  margin-bottom: -1px;
+  cursor: pointer;
+}
+
+.tab:hover { color: var(--testo); background: none; }
+.tab.attiva { color: var(--accento); border-bottom-color: var(--accento); }
+.tab:focus-visible { outline: 2px solid var(--accento); outline-offset: -2px; }
+
+/* ---------- Prosa della scheda "Metodo" ---------- */
+
+.prosa { font-size: .9375rem; }
+.prosa h2 {
+  margin: 2rem 0 .625rem;
+  font-size: .8125rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--accento);
+}
+.prosa h2:first-child { margin-top: 0; }
+.prosa p { margin: 0 0 .75rem; max-width: 68ch; }
+.prosa ul { margin: 0 0 .75rem; padding-left: 1.125rem; max-width: 68ch; }
+.prosa li { margin-bottom: .375rem; }
+
+.prosa .formula {
+  padding: .75rem .875rem;
+  background: #f8fafc;
+  border-left: 3px solid var(--accento);
+  border-radius: 0 6px 6px 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: .8125rem;
+}
+
+.prosa .fonti li { margin-bottom: .625rem; }
+.prosa a { color: var(--accento); }
+
+table.mini {
+  width: 100%;
+  margin-bottom: .75rem;
+  border-collapse: collapse;
+  font-size: .8125rem;
+}
+table.mini th, table.mini td {
+  padding: .5rem .625rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--bordo);
+}
+table.mini thead th {
+  font-size: .6875rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--testo-tenue);
+}
+table.mini .importo { white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+label.secondaria { margin-top: 1rem; font-weight: 600; font-size: .8125rem; }
+
+select#mensilita {
+  width: 100%;
+  padding: .625rem .875rem;
+  font: inherit;
+  font-size: .9375rem;
+  color: inherit;
+  background: var(--pannello);
+  border: 1px solid var(--bordo);
+  border-radius: var(--raggio);
+}
+select#mensilita:focus-visible { outline: 2px solid var(--accento); outline-offset: 1px; }
+
+.aiuto { margin: .375rem 0 0; font-size: .75rem; color: var(--testo-tenue); }
+
+.delta {
+  display: block;
+  margin-top: .125rem;
+  font-size: .75rem;
+  font-weight: 600;
+  color: var(--negativo);
+}
+
+.prosa .codice {
+  margin: 0 0 .75rem;
+  padding: .875rem 1rem;
+  overflow-x: auto;
+  background: #f8fafc;
+  border: 1px solid var(--bordo);
+  border-radius: 6px;
+  font-size: .75rem;
+  line-height: 1.5;
+}
+
+.prosa .codice code { padding: 0; background: none; font: inherit; }
+
+.prosa code {
+  padding: .1rem .3rem;
+  background: #eceff3;
+  border-radius: 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: .8125em;
+}
+
+/* ---------- Schede a toggle (details/summary nativi) ---------- */
+
+.scheda {
+  border-bottom: 1px solid var(--bordo);
+}
+
+.scheda:last-of-type { border-bottom: 0; }
+
+.scheda > summary {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .875rem 0;
+  font-size: .9375rem;
+  font-weight: 600;
+  list-style: none;
+  cursor: pointer;
+}
+
+/* Nasconde il triangolino nativo, sostituito da una freccia disegnata. */
+.scheda > summary::-webkit-details-marker { display: none; }
+
+.scheda > summary::before {
+  content: "";
+  flex: 0 0 auto;
+  width: .5rem;
+  height: .5rem;
+  border-right: 2px solid var(--accento);
+  border-bottom: 2px solid var(--accento);
+  transform: rotate(-45deg);
+  transition: transform .15s ease;
+}
+
+.scheda[open] > summary::before { transform: rotate(45deg); }
+.scheda > summary:hover { color: var(--accento); }
+.scheda > summary:focus-visible { outline: 2px solid var(--accento); outline-offset: 2px; }
+
+.scheda-corpo { padding: 0 0 1rem 1rem; }
+.scheda-corpo > :last-child { margin-bottom: 0; }
+
+.titolo-gruppo {
+  margin: 1.75rem 0 .25rem !important;
+  font-size: .8125rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--accento);
+}
+
+.sotto-titolo {
+  margin: 1rem 0 .25rem !important;
+  font-size: .875rem;
+  font-weight: 600;
+}
+
+.sotto-titolo:first-child { margin-top: 0 !important; }
+
+.nota-blocco {
+  margin: 0 0 .5rem !important;
+  font-size: .8125rem;
+  color: var(--testo-tenue);
+}
+
+table.mini .senza-acapo { white-space: nowrap; }
+
+.prosa ol { margin: 0 0 .75rem; padding-left: 1.25rem; max-width: 68ch; }
+.prosa ol > li { margin-bottom: .625rem; }
+.prosa ol ul { margin: .375rem 0 0; }
