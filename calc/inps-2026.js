@@ -1,12 +1,15 @@
 /**
  * CONTRIBUTI PREVIDENZIALI A CARICO DIPENDENTE — INPS 2026
  *
- * Fonte parametri: Circolare INPS 6/2026 (minimali, massimali e aliquote).
+ * Fonte parametri: Circolare INPS n. 6 del 30 gennaio 2026 (minimali e
+ * massimali). Tutti e tre i valori sotto sono stati verificati sulla fonte.
  *
  * Assunzioni V1:
  * - Lavoratore dipendente del settore privato, iscritto al FPLD.
- * - Aliquota a carico dipendente 9,19% (quota IVS). Non è modellata alcuna
- *   aliquota aggiuntiva da CCNL (es. fondi sanitari o previdenza complementare).
+ * - Aliquota a carico dipendente 9,19% (quota IVS). È la quota del lavoratore
+ *   sul 33% complessivo del FPLD, di cui il 23,81% grava sul datore di lavoro
+ *   e non è modellato qui. Nessuna aliquota aggiuntiva da CCNL (fondi sanitari,
+ *   enti bilaterali, previdenza complementare).
  * - La base contributiva coincide con la RAL: nessuna voce esclusa
  *   dall'imponibile previdenziale (es. rimborsi, welfare, fringe benefit).
  */
@@ -15,8 +18,9 @@ export const INPS = {
   // Aliquota IVS ordinaria a carico del lavoratore.
   ALIQUOTA: 0.0919,
 
-  // Aliquota aggiuntiva dell'1% (L. 438/1992, art. 3-ter) dovuta sulla quota
-  // di retribuzione eccedente la prima fascia di pensionabilità.
+  // Aliquota aggiuntiva dell'1% (art. 3-ter D.L. 384/1992, conv. L. 438/1992)
+  // dovuta sulla quota eccedente la prima fascia di retribuzione pensionabile,
+  // fissata per il 2026 a 56.224€ annui (4.685€ mensili).
   ALIQUOTA_AGGIUNTIVA: 0.01,
   SOGLIA_ALIQUOTA_AGGIUNTIVA: 56224,
 

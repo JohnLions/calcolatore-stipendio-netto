@@ -132,6 +132,27 @@ test('il netto quadra con la somma delle trattenute', () => {
   }
 });
 
+test('imposte e contributi sono separati e sommano alle trattenute', () => {
+  for (const ral of [12000, 25000, 35000, 70000, 130000]) {
+    const r = calcolaNetto(ral);
+
+    // Le imposte sono IRPEF netta + addizionali: i contributi NON sono imposte.
+    const atteso = r.irpefNetta + r.addizionaleRegionale + r.addizionaleComunale;
+    assert.ok(
+      Math.abs(r.totaleImposte - atteso) < 0.01,
+      `RAL ${ral}: totaleImposte ${r.totaleImposte} != ${atteso.toFixed(2)}`
+    );
+
+    assert.ok(
+      Math.abs(r.contributiInps + r.totaleImposte - r.totaleTrattenute) < 0.01,
+      `RAL ${ral}: contributi + imposte != totale trattenute`
+    );
+
+    // Le imposte sono sempre una parte propria del totale, mai il totale.
+    assert.ok(r.totaleImposte < r.totaleTrattenute);
+  }
+});
+
 test('netto mensile = netto annuale / mensilità', () => {
   const r = calcolaNetto(35000);
   assert.equal(r.mensilita, MENSILITA);

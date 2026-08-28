@@ -110,6 +110,12 @@ function righe(r) {
     },
     {
       tipo: 'trattenuta',
+      voce: 'Totale imposte',
+      nota: 'IRPEF netta + addizionali. I contributi previdenziali non sono imposte',
+      valore: -r.totaleImposte,
+    },
+    {
+      tipo: 'trattenuta',
       voce: 'Totale trattenute',
       nota:
         'Contributi + IRPEF netta + addizionali' +
@@ -199,34 +205,39 @@ function render(r) {
       <div class="kpi">
         <span class="kpi-label">${
           r.mensilitaAggiuntive > 0
-            ? `Netto di una mensilità ordinaria · ${r.mensilitaOrdinarie} su ${r.mensilita}`
+            ? `Netto mensile · ${r.mensilitaOrdinarie} mensilità ordinarie`
             : `Netto mensile · ${r.mensilita} mensilità`
         }</span>
         <span class="kpi-valore">${eur.format(r.nettoMensileOrdinario)}</span>
       </div>
-      ${
-        r.mensilitaAggiuntive > 0
-          ? `<div class="kpi">
-               <span class="kpi-label">${
-                 r.mensilitaAggiuntive === 1
-                   ? 'Netto della tredicesima'
-                   : `Netto di una mensilità aggiuntiva · ${r.mensilitaAggiuntive}`
-               }</span>
-               <span class="kpi-valore">${eur.format(r.nettoMensileAggiuntivo)}
-                 <span class="delta">${pct(r.scartoMensilitaAggiuntiva)}</span>
-               </span>
-             </div>`
-          : ''
-      }
       <div class="kpi">
         <span class="kpi-label">Totale trattenute</span>
         <span class="kpi-valore">${eur.format(r.totaleTrattenute)}</span>
-      </div>
-      <div class="kpi">
-        <span class="kpi-label">Aliquota effettiva</span>
-        <span class="kpi-valore">${pct(r.aliquotaEffettiva)}</span>
+        <span class="kpi-dettaglio">
+          di cui <strong>${eur.format(r.totaleImposte)}</strong> di imposte
+          e ${eur.format(r.contributiInps)} di contributi
+        </span>
       </div>
     </div>
+
+    <div class="badge-riga">
+      <span class="badge">
+        Aliquota effettiva <strong>${pct(r.aliquotaEffettiva)}</strong>
+      </span>
+      ${
+        r.mensilitaAggiuntive > 0
+          ? `<span class="badge">
+               ${r.mensilitaAggiuntive === 1 ? 'Tredicesima' : 'Mensilità aggiuntiva'}
+               <strong>${eur.format(r.nettoMensileAggiuntivo)}</strong>
+               <span class="badge-delta">${pct(r.scartoMensilitaAggiuntiva)}</span>
+             </span>`
+          : ''
+      }
+      <span class="badge">
+        TFR maturato <strong>${eur.format(r.tfrAnnuo)}</strong>
+      </span>
+    </div>
+
     ${avvisi}
     <table class="dettaglio">
       <caption>Dettaglio di tutte le voci trattenute</caption>

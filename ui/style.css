@@ -444,3 +444,42 @@ table.mini .senza-acapo { white-space: nowrap; }
 .prosa ol { margin: 0 0 .75rem; padding-left: 1.25rem; max-width: 68ch; }
 .prosa ol > li { margin-bottom: .625rem; }
 .prosa ol ul { margin: .375rem 0 0; }
+
+/* ---------- Sintesi: tre riquadri primari ---------- */
+
+.kpi-dettaglio {
+  margin-top: .375rem;
+  font-size: .75rem;
+  line-height: 1.4;
+  color: var(--testo-tenue);
+}
+
+.kpi-dettaglio strong { color: var(--testo); }
+
+/* ---------- Badge secondari ---------- */
+
+.badge-riga {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-bottom: 1.5rem;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: baseline;
+  gap: .375rem;
+  padding: .375rem .75rem;
+  font-size: .8125rem;
+  color: var(--testo-tenue);
+  background: var(--pannello);
+  border: 1px solid var(--bordo);
+  border-radius: 999px;
+}
+
+.badge strong {
+  color: var(--testo);
+  font-variant-numeric: tabular-nums;
+}
+
+.badge-delta { color: var(--negativo); font-weight: 600; }

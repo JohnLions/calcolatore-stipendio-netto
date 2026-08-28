@@ -6,6 +6,13 @@ annuale e mensile** e mostra **tutte le voci trattenute** lungo il percorso.
 Parametri fiscali e contributivi **2026**. HTML/CSS/JS vanilla, nessun framework,
 nessuna dipendenza, nessun build step.
 
+**→ [Demo online](https://calcolatore-stipendio-netto-beta.vercel.app)**
+
+Inserisci una RAL e ottieni netto annuale, netto mensile e il totale delle
+trattenute, separando le **imposte** dai **contributi previdenziali**. La scheda
+*Metodo, fonti e limiti* documenta ogni passaggio e ogni semplificazione; la
+scheda *Come si amplia* spiega cosa servirebbe per estenderlo.
+
 ---
 
 ## Come si usa
@@ -49,7 +56,7 @@ ui/
   app.js                Rendering (importa gli stessi moduli dei test)
   style.css
 tests/
-  calcola-netto.test.js 42 test: golden case, coerenza, soglie, mensilità, cedolino
+  calcola-netto.test.js 43 test: golden case, coerenza, soglie, mensilità, cedolino
 ```
 
 I parametri normativi vivono **solo** nei tre moduli di `calc/`. `calcola-netto.js`
@@ -72,6 +79,11 @@ le detrazioni invece che prima, produce risultati diversi.
 | 4 | IRPEF netta | `max(0, IRPEF lorda − detrazione − cuneo detrazione)` |
 | 5 | Addizionali | sull'imponibile fiscale, **prima** delle detrazioni |
 | 6 | Netto | `imponibile − IRPEF netta − addizionali + cuneo somma esente + trattamento integrativo` |
+
+L'output distingue **imposte** (IRPEF netta + addizionali) da **contributi
+previdenziali**. Non è la stessa cosa: i contributi non sono un'imposta, sono
+retribuzione differita che torna al lavoratore sotto forma di pensione. Il
+campo `totaleTrattenute` somma le due voci, `totaleImposte` isola la prima.
 
 Le mensilità **non cambiano l'ammontare annuo**, solo come viene ripartito — e
 la ripartizione non è uniforme: vedi la sezione sulla tredicesima.
@@ -109,8 +121,12 @@ sanity check sul cedolino reale (sotto) misura esattamente questo scarto.
 
 Aliquota a carico dipendente **9,19%** (quota IVS, FPLD settore privato), con:
 
-- **+1%** sulla quota eccedente **56.224 €** (L. 438/1992, art. 3-ter)
+- **+1%** sulla quota eccedente **56.224 €** (art. 3-ter D.L. 384/1992, conv. L. 438/1992)
 - **massimale contributivo a 122.295 €**: oltre, nessun contributo IVS dovuto
+
+Tutti e tre i valori sono verificati sulla **Circolare INPS n. 6 del 30 gennaio
+2026**. Il 9,19% è la quota del lavoratore sul 33% complessivo del FPLD: il
+restante 23,81% grava sul datore di lavoro e non è modellato qui.
 
 Assunto che la base contributiva coincida con la RAL: nessuna voce esclusa
 dall'imponibile previdenziale (rimborsi, welfare, fringe benefit).
@@ -341,7 +357,7 @@ test lo verifica esplicitamente su tutte e tre le sue soglie.
 
 ## Test
 
-`npm test` — 42 test, cinque famiglie:
+`npm test` — 43 test, cinque famiglie:
 
 1. **Golden case** su RAL 25k / 30k / 35k / 45k / 70k. Congelano voce per voce
    l'output della logica validata: qualsiasi refactor che li rompa è una regressione.

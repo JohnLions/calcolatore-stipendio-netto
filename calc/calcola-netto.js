@@ -119,8 +119,11 @@ export function calcolaNetto(ral, opzioni = {}) {
   const addizionaleComunale = calcolaAddizionaleComunale(imponibileFiscale);
 
   // Step 6 — Netto.
-  const totaleTrattenute =
-    contributiInps + irpefNetta + addizionaleRegionale + addizionaleComunale;
+  // Le imposte sono l'IRPEF netta più le addizionali. I contributi NON sono
+  // imposte: sono retribuzione differita che torna al lavoratore come pensione.
+  // Tenerli distinti è il motivo per cui esistono due totali separati.
+  const totaleImposte = irpefNetta + addizionaleRegionale + addizionaleComunale;
+  const totaleTrattenute = contributiInps + totaleImposte;
   const nettoAnnuale =
     imponibileFiscale -
     irpefNetta -
@@ -163,6 +166,7 @@ export function calcolaNetto(ral, opzioni = {}) {
     irpefNetta: round2(irpefNetta),
     addizionaleRegionale: round2(addizionaleRegionale),
     addizionaleComunale: round2(addizionaleComunale),
+    totaleImposte: round2(totaleImposte),
     totaleTrattenute: round2(totaleTrattenute),
     nettoAnnuale: round2(nettoAnnuale),
     nettoMensile: round2(nettoMensile),
