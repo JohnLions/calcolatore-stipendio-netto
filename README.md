@@ -251,7 +251,10 @@ Fonte: art. 72, c. 1, L.R. Lombardia 14 luglio 2003 n. 10; aliquote pubblicate
 dal Dipartimento delle Finanze (MEF), Portale del Federalismo Fiscale.
 
 **Comunale Milano — aliquota unica dello 0,80%**, con **esenzione totale fino a
-23.000 €** di imponibile. Non è a scaglioni. Ed è una **soglia, non una
+23.000 €** di imponibile. Verificato sulla
+[pagina ufficiale del Comune di Milano](https://www.comune.milano.it/argomenti/tributi/addizionale-comunale-irpef)
+(Deliberazione C.C. n. 46 del 28 settembre 2020 per la soglia, n. 36 del
+21 ottobre 2013 per l'aliquota unica). Non è a scaglioni. Ed è una **soglia, non una
 franchigia**: superati i 23.000 €, lo 0,80% si applica sull'**intero**
 imponibile, non solo sull'eccedenza. Verificato sull'esempio pubblicato dalla
 fonte (35.000 € imponibili → 280 € di addizionale), che un test riproduce.
@@ -273,7 +276,7 @@ Fondo di garanzia.
 | Maggiorazione detrazione di 65 € (fascia 25–35k) | Effetto marginale, non cambia l'ordine di grandezza. |
 | Tetto alle detrazioni oltre 75k / 200k | Fuori dal caso "standard"; rileva solo su redditi alti. |
 | Trattamento integrativo nella fascia 15.000–28.000 € | La norma lo riconosce se la *somma* delle detrazioni (familiari, lavoro dipendente, mutuo ante 2022) supera l'imposta lorda. Nel profilo V1 esiste la sola detrazione da lavoro dipendente, che sopra i 15.000 € non supera mai l'imposta lorda: il credito in quella fascia è quindi sempre zero. Con familiari a carico potrebbe spettare. |
-| Meccanismo "a rata" delle addizionali | Nella realtà le addizionali dell'anno N sono trattenute in 11 rate nell'anno N+1. Qui tutto è calcolato **a regime**, nello stesso anno: rende il risultato leggibile come "stipendio a regime" invece che come fotografia di un anno di transizione. |
+| Meccanismo "a rata" delle addizionali | Nella realtà l'acconto è trattenuto in massimo 9 rate da marzo e il saldo in massimo 11 rate dopo il conguaglio. Qui tutto è calcolato **a regime**, nello stesso anno: rende il risultato leggibile come "stipendio a regime" invece che come fotografia di un anno di transizione. |
 | Incapienza rimborsabile | Se le detrazioni superano l'imposta lorda, l'eccedenza è persa (IRPEF netta a zero). L'importo non goduto è comunque esposto nel campo `detrazioniNonGodute`. |
 | Premi di risultato, welfare, fringe benefit, straordinari | Non desumibili da una RAL. |
 
