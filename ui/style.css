@@ -1,6 +1,7 @@
 :root {
   --sfondo: #f4f5f7;
   --pannello: #ffffff;
+  --campo: #f6f8fa;
   --bordo: #e2e5ea;
   --testo: #14181f;
   --testo-tenue: #667085;
@@ -84,7 +85,7 @@ input[type="number"] {
   font-size: 1.125rem;
   font-variant-numeric: tabular-nums;
   color: inherit;
-  background: var(--pannello);
+  background: var(--campo);
   border: 1px solid var(--bordo);
   border-radius: var(--raggio);
 }
@@ -146,6 +147,10 @@ button:focus-visible { outline: 2px solid var(--testo); outline-offset: 2px; }
 
 .kpi-label {
   font-size: .75rem;
+  line-height: 1.25;
+  /* Due righe sempre riservate: senza, un'etichetta che va a capo abbassa il
+     proprio valore e i numeri dei riquadri non risultano allineati. */
+  min-height: 2.5em;
   color: var(--testo-tenue);
 }
 
@@ -252,6 +257,9 @@ tr.info th, tr.info .importo { color: var(--info); }
   h1 { font-size: 1.625rem; }
   .campo { flex-wrap: wrap; }
   .campo-input { flex-basis: 100%; }
+  /* In colonna singola i riquadri non vanno allineati fra loro: la riga
+     riservata all'etichetta diventa spazio vuoto. */
+  .kpi-label { min-height: 0; }
   /* Solo il bottone dentro il campo: le tab non devono diventare full-width,
      altrimenti traboccano dal contenitore flex e si sovrappongono. */
   .campo button { flex-basis: 100%; }
@@ -344,7 +352,7 @@ select#mensilita {
   font: inherit;
   font-size: .9375rem;
   color: inherit;
-  background: var(--pannello);
+  background: var(--campo);
   border: 1px solid var(--bordo);
   border-radius: var(--raggio);
 }

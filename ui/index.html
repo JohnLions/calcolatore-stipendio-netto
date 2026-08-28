@@ -66,7 +66,7 @@
     <div id="pannello-metodo" role="tabpanel" aria-labelledby="tab-metodo" hidden>
       <section class="pannello prosa">
 
-        <details class="scheda" open>
+        <details class="scheda">
           <summary>Metodo di calcolo</summary>
           <div class="scheda-corpo">
             <p>
@@ -124,30 +124,36 @@
         </details>
 
         <details class="scheda">
-          <summary>Assunzioni</summary>
+          <summary>Perimetro e semplificazioni</summary>
           <div class="scheda-corpo">
+            <p class="sotto-titolo">Il caso modellato</p>
             <ul>
-              <li>Impiegato a tempo indeterminato, residente a Milano, anno intero lavorato.</li>
-              <li>Nessun familiare a carico, nessuna agevolazione personale.</li>
+              <li>Impiegato a tempo indeterminato del settore privato, residente a Milano, anno intero lavorato.</li>
+              <li>Nessun familiare a carico, nessuna agevolazione personale (impatriati, rientro cervelli, under 30).</li>
               <li><strong>Mensilità selezionabili</strong> fra 12, 13 e 14: nella realtà il numero dipende dal CCNL. Le 14 sono previste da Commercio, Turismo, Credito, Assicurazioni, Chimici e Alimentari.</li>
-              <li>Le addizionali sono ripartite sulle 12 mensilità ordinarie; nella realtà sono trattenute in 11 rate.</li>
               <li>Nessun CCNL modellato: solo parametri fiscali e contributivi nazionali 2026.</li>
-              <li>La RAL coincide con la base contributiva e non contiene benefit o welfare.</li>
-              <li>Addizionali calcolate <em>a regime</em>, non col meccanismo reale “a rata” sull’anno successivo.</li>
+              <li>La RAL coincide con la base contributiva: nessuna voce esclusa dall’imponibile previdenziale.</li>
             </ul>
-          </div>
-        </details>
 
-        <details class="scheda">
-          <summary>Cosa non è incluso</summary>
-          <div class="scheda-corpo">
+            <p class="sotto-titolo">Cosa resta fuori</p>
             <ul>
-              <li><strong>Trattamento integrativo nella fascia 15.000–28.000 €.</strong> La norma lo riconosce se la <em>somma</em> delle detrazioni (familiari a carico, lavoro dipendente, mutuo prima casa ante 2022) supera l’imposta lorda. Nel profilo modellato esiste la sola detrazione da lavoro dipendente, che sopra i 15.000 € non supera mai l’imposta lorda: in V1 il credito in quella fascia è quindi sempre zero. Con familiari a carico potrebbe invece spettare.</li>
+              <li><strong>Contributi a carico del datore di lavoro</strong>, circa il 23,81% sul FPLD più INAIL. Qui si calcola solo la quota del dipendente.</li>
+              <li><strong>Detrazioni per familiari a carico</strong> (art. 12 TUIR), oneri detraibili, mutuo prima casa.</li>
+              <li>
+                <strong>Trattamento integrativo nella fascia 15.000–28.000 €.</strong>
+                La norma lo riconosce se la <em>somma</em> delle detrazioni
+                (familiari a carico, lavoro dipendente, mutuo prima casa ante
+                2022) supera l’imposta lorda. Nel profilo modellato esiste la
+                sola detrazione da lavoro dipendente, che sopra i 15.000 € non
+                supera mai l’imposta lorda: in questa versione il credito in
+                quella fascia è quindi sempre zero. Con familiari a carico
+                potrebbe invece spettare.
+              </li>
               <li><strong>Agevolazioni mirate 2026</strong> (L. 199/2025): imposta sostitutiva al 15% su lavoro notturno, festivo e a turni; detassazione degli incrementi contrattuali. Richiedono il dettaglio del cedolino, non sono ricavabili dalla sola RAL.</li>
-              <li>Detrazioni per familiari a carico, oneri detraibili, mutuo prima casa.</li>
               <li>Maggiorazione di 65 € della detrazione nella fascia 25–35k; tetto alle detrazioni oltre 75k / 200k.</li>
               <li>Premi di risultato, welfare aziendale, fringe benefit, buoni pasto, straordinari.</li>
-              <li>Il TFR è mostrato come voce informativa, ma è accantonato e non entra nel netto.</li>
+              <li>Il <strong>meccanismo “a rata”</strong> delle addizionali: nella realtà quelle maturate nell’anno sono trattenute in 11 rate nell’anno successivo. Qui sono calcolate a regime e ripartite sulle 12 mensilità ordinarie.</li>
+              <li>Il <strong>TFR</strong> è mostrato come voce informativa: matura sulla RAL ma è accantonato, non erogato in busta, e non entra nel netto.</li>
             </ul>
           </div>
         </details>
