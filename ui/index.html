@@ -22,7 +22,7 @@
       <button role="tab" id="tab-metodo" aria-controls="pannello-metodo"
               aria-selected="false" class="tab">Metodo, fonti e limiti</button>
       <button role="tab" id="tab-estensioni" aria-controls="pannello-estensioni"
-              aria-selected="false" class="tab">Come si amplia</button>
+              aria-selected="false" class="tab">Cosa aggiungere</button>
     </div>
 
     <div id="pannello-calcolatore" role="tabpanel" aria-labelledby="tab-calcolatore">
@@ -94,12 +94,6 @@
               fissa la legge. Un apprendista versa il 5,84%; dipendenti pubblici,
               dirigenti, agricoli e lavoratori dello spettacolo hanno gestioni e
               aliquote proprie.
-            </p>
-            <p>
-              Resta fuori dal calcolo la quota a carico del <strong>datore di
-              lavoro</strong>, che è molto più alta — attorno al 30% — ed è lì
-              che contano davvero settore, dimensione aziendale, inquadramento e
-              rischio INAIL.
             </p>
             <p>
               Sull’imponibile si calcola l’<strong>IRPEF lorda</strong> per
@@ -430,20 +424,10 @@ R &gt; 50.000        →  0</code></pre>
 
     <div id="pannello-estensioni" role="tabpanel" aria-labelledby="tab-estensioni" hidden>
       <section class="pannello prosa">
-        <h2>Due strade</h2>
-        <p>
-          Per ampliare il calcolatore si possono <strong>aggiungere dati</strong>
-          a un motore che già li regge, oppure <strong>integrare nuovi
-          elementi</strong> che il modello oggi non conosce. La prima strada è
-          raccolta e manutenzione, la seconda è modellazione.
-        </p>
-
-        <h2>Estensioni di dati</h2>
-        <ol>
+        <ol class="elenco-estensioni">
           <li>
-            <strong>Addizionali di tutte le regioni e comuni.</strong> Una
-            tabella per ente, con l’indicazione del modello che usa fra i tre
-            esistenti:
+            <strong>Addizionali di tutte le regioni e comuni.</strong>
+            Una tabella per ente, con l’indicazione del modello che usa fra i tre esistenti:
             <ul>
               <li><strong>Aliquota unica</strong> sull’intero imponibile — Comune di Milano, 0,80%.</li>
               <li><strong>Scaglioni progressivi</strong>, sul modello IRPEF: ogni aliquota vale solo sulla quota di reddito nel proprio scaglione — Regione Lombardia.</li>
@@ -451,88 +435,45 @@ R &gt; 50.000        →  0</code></pre>
             </ul>
           </li>
           <li>
-            <strong>Aliquote contributive per categoria.</strong> Apprendistato
-            al 5,84%, dirigenti, dipendenti pubblici, agricoli, spettacolo:
-            ciascuna gestione ha la propria.
+            <strong>Aliquote contributive per categoria.</strong>
+            Apprendistato al 5,84%, dirigenti, dipendenti pubblici, agricoli,
+            spettacolo: ciascuna gestione ha la propria.
           </li>
           <li>
-            <strong>Parametri annuali.</strong> Massimale, soglia dell’aliquota
-            aggiuntiva e importi delle detrazioni cambiano ogni anno con la legge
-            di bilancio e le circolari INPS.
+            <strong>Parametri annuali.</strong>
+            Massimale, soglia dell’aliquota aggiuntiva e importi delle detrazioni
+            cambiano ogni anno con la legge di bilancio e le circolari INPS.
+          </li>
+          <li>
+            <strong>Familiari a carico</strong> (art. 12 TUIR).
+            La più laboriosa: la sola detrazione per il coniuge ha otto rami, con
+            cinque maggiorazioni fisse da 10, 20 e 30 € infilate fra 29.000 e
+            35.200 € di reddito. In più la detrazione per figli esiste oggi
+            <em>solo</em> fra i 21 e i 29 anni: sotto i 21 c’è l’Assegno Unico,
+            che è un beneficio INPS e non una voce fiscale; sopra i 30 la
+            L. 207/2024 l’ha abolita per i figli non disabili. Sbloccherebbe il
+            trattamento integrativo nella fascia 15.000–28.000 €, che oggi
+            risulta sempre zero proprio perché manca questa detrazione.
+          </li>
+          <li>
+            <strong>Costo per l’azienda.</strong>
+            Contributi a carico del datore, INAIL, accantonamento TFR: dalla RAL
+            al costo aziendale totale. Cambia il destinatario del calcolo, non la
+            matematica.
+          </li>
+          <li>
+            <strong>Anno parziale.</strong>
+            Oggi assumiamo 365 giorni lavorati. Le detrazioni si ragguagliano ai
+            giorni, e sotto una certa soglia entra in gioco il minimo garantito
+            di 690 € che nel modello attuale non ha mai effetto.
+          </li>
+          <li>
+            <strong>Contratti diversi.</strong>
+            Apprendistato e tempo determinato hanno aliquote contributive
+            proprie. Il modulo INPS è già isolato: servirebbe parametrizzare
+            l’aliquota, non riscrivere il calcolo.
           </li>
         </ol>
-        <p>
-          Il prototipo implementa già tutti e tre i modelli di addizionale. Il
-          motore degli scaglioni non conosce la Lombardia: cammina su una lista
-          di soglie e aliquote, e va bene qualunque lista.
-        </p>
-        <pre class="codice"><code>export const ADDIZIONALE_REGIONALE_LOMBARDIA_SCAGLIONI = [
-  { fino: 15000,    aliquota: 0.0123 },
-  { fino: 28000,    aliquota: 0.0158 },
-  { fino: 50000,    aliquota: 0.0172 },
-  { fino: Infinity, aliquota: 0.0173 },
-];</code></pre>
-        <p>
-          Aggiungere una regione significa aggiungere una tabella come questa:
-          nessuna logica da riscrivere. Si verifica aprendo
-          <code>calc/addizionali-2026.js</code>.
-        </p>
-        <p>
-          Mancano i <strong>dati</strong>: 20 regioni e circa 7.900 comuni,
-          pubblicati dal MEF. È raccolta e manutenzione annuale, ed è fuori dal
-          prototipo per scelta — una tabella di settemila righe non verificate
-          rende il calcolatore più ampio ma meno affidabile, perché un errore in
-          una riga qualsiasi produce un risultato sbagliato che non si può
-          notare.
-        </p>
-
-        <h2>Estensioni di modello</h2>
-        <p>Richiedono di insegnare al calcolatore qualcosa che oggi non sa.</p>
-        <ul>
-          <li>
-            <strong>Familiari a carico</strong> (art. 12 TUIR). La più laboriosa:
-            la sola detrazione per il coniuge ha otto rami, con cinque
-            maggiorazioni fisse da 10, 20 e 30 € infilate fra 29.000 e 35.200 €
-            di reddito. In più la detrazione per figli esiste oggi <em>solo</em>
-            fra i 21 e i 29 anni: sotto i 21 c’è l’Assegno Unico, che è un
-            beneficio INPS e non una voce fiscale; sopra i 30 la L. 207/2024
-            l’ha abolita per i figli non disabili. Sbloccherebbe il trattamento
-            integrativo nella fascia 15.000–28.000 €, che oggi risulta sempre
-            zero proprio perché manca questa detrazione.
-          </li>
-          <li>
-            <strong>Costo per l’azienda.</strong> Contributi a carico del datore,
-            INAIL, accantonamento TFR: dalla RAL al costo aziendale totale.
-            Cambia il destinatario del calcolo, non la matematica.
-          </li>
-          <li>
-            <strong>Anno parziale.</strong> Oggi assumiamo 365 giorni lavorati.
-            Le detrazioni si ragguagliano ai giorni, e sotto una certa soglia
-            entra in gioco il minimo garantito di 690 € che nel modello attuale
-            non ha mai effetto.
-          </li>
-          <li>
-            <strong>Contratti diversi.</strong> Apprendistato e tempo determinato
-            hanno aliquote contributive proprie. Il modulo INPS è già isolato:
-            servirebbe parametrizzare l’aliquota, non riscrivere il calcolo.
-          </li>
-        </ul>
-
-        <h2>Cosa richiederebbe di ripensare l’impianto</h2>
-        <p>
-          Un solo caso, ed è utile sapere quale. Oggi il calcolatore ragiona
-          <strong>per anno</strong> e poi ripartisce sulle mensilità. Una busta
-          paga vera fa il contrario: calcola mese per mese su una proiezione
-          annuale, e a dicembre esegue il <strong>conguaglio</strong> che
-          riallinea tutto.
-        </p>
-        <p>
-          Finché interessa il netto annuale e la differenza fra mensilità
-          ordinaria e aggiuntiva, l’approccio annuale è corretto e più semplice.
-          Se servisse riprodurre <em>il cedolino di un mese specifico</em> — con
-          ratei, conguagli progressivi e variazioni in corso d’anno — non
-          basterebbe aggiungere codice: andrebbe invertito il verso del calcolo.
-        </p>
       </section>
     </div>
 

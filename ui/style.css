@@ -496,3 +496,9 @@ table.mini .senza-acapo { white-space: nowrap; }
 }
 
 .badge-delta { color: var(--negativo); font-weight: 600; }
+
+.elenco-estensioni { margin: 0; padding-left: 1.375rem; max-width: 68ch; }
+.elenco-estensioni > li { margin-bottom: 1rem; }
+.elenco-estensioni > li:last-child { margin-bottom: 0; }
+.elenco-estensioni ul { margin: .5rem 0 0; padding-left: 1.125rem; }
+.elenco-estensioni ul li { margin-bottom: .375rem; }
