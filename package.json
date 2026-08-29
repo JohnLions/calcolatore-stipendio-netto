@@ -1,5 +1,5 @@
 {
-  "name": "jethr-calcolatore-netto",
+  "name": "calcolatore-stipendio-netto",
   "version": "1.0.0",
   "description": "Calcolatore RAL -> netto annuale/mensile — prototipo V1 (Italia, 2026)",
   "type": "module",
