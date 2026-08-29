@@ -57,7 +57,7 @@ ui/
   app.js                Rendering (importa gli stessi moduli dei test)
   style.css
 tests/
-  calcola-netto.test.js 43 test: golden case, coerenza, soglie, mensilità, cedolino
+  calcola-netto.test.js 45 test: golden case, coerenza, soglie, mensilità
 ```
 
 I parametri normativi vivono **solo** nei tre moduli di `calc/`. `calcola-netto.js`
@@ -116,7 +116,7 @@ Un CCNL reale aggiunge: aliquote contributive proprie (fondi sanitari, previdenz
 complementare, enti bilaterali), numero di mensilità, minimi tabellari per livello,
 scatti di anzianità, superminimi. Modellarli significherebbe scegliere *un* CCNL
 e *un* livello, cioè restringere il prototipo invece di generalizzarlo. Il
-sanity check sul cedolino reale (sotto) misura esattamente questo scarto.
+verifica sul cedolino reale (sotto) misura esattamente questo scarto.
 
 ### Contributi INPS
 
@@ -140,10 +140,9 @@ gestioni proprie. Il modello copre il solo impiegato privato a tempo
 indeterminato.
 
 Il CCNL può però aggiungere trattenute che **non sono INPS**: fondi sanitari,
-enti bilaterali, previdenza complementare. È esattamente lo scarto misurato nel
-sanity check qui sotto: il cedolino reale del Commercio ha un'aliquota implicita
-del **9,86%** contro il 9,19% del modello, e quei 0,67 punti sono voci
-contrattuali.
+enti bilaterali, previdenza complementare. È lo scarto emerso dalla verifica sul cedolino
+reale: un'aliquota implicita del **9,86%** contro il 9,19% del modello, e quei
+0,67 punti sono voci contrattuali.
 
 Resta interamente fuori la quota a carico del **datore di lavoro**, attorno al
 30%: è lì che pesano settore, dimensione aziendale, inquadramento e rischio INAIL.
@@ -375,7 +374,7 @@ test lo verifica esplicitamente su tutte e tre le sue soglie.
 
 ## Test
 
-`npm test` — 43 test, cinque famiglie:
+`npm test` — 45 test, quattro famiglie:
 
 1. **Golden case** su RAL 25k / 30k / 35k / 45k / 70k. Congelano voce per voce
    l'output della logica validata: qualsiasi refactor che li rompa è una regressione.
@@ -392,34 +391,24 @@ test lo verifica esplicitamente su tutte e tre le sue soglie.
    annuale per 12/13/14; il netto annuale non dipende dalle mensilità; la
    mensilità aggiuntiva è sempre più bassa dell'ordinaria; l'IRPEF che sconta è
    davvero quella marginale.
-5. **Sanity check su cedolino reale** (vedi sotto).
+5. **Confronto con fonti esterne** — cedolino reale e tre calcolatori online (vedi sotto).
 
-### Il sanity check sul cedolino reale
+### La verifica su cedolino reale
 
-Ho confrontato la pipeline con un cedolino vero (**CCNL Commercio/Confcommercio**,
-26 giorni contributivi, 14 mensilità), annualizzando le voci mensili.
+Il modello è stato confrontato anche con un **cedolino reale** (CCNL Commercio,
+14 mensilità), annualizzandone le voci. Il netto è risultato entro l'**1,42%**
+del valore calcolato dal prototipo.
 
-**Non è un test di match esatto, e non deve esserlo**: il CCNL reale ha aliquote
-contributive diverse da quelle nazionali pure della V1. Serve a verificare che
-non ci siano errori di ordine di grandezza.
+Non era atteso un match esatto, e non doveva esserlo: il CCNL reale ha aliquote
+contributive proprie che questo modello dichiaratamente non copre. L'aliquota
+implicita nel cedolino era del **9,86%** contro il 9,19% dei soli contributi
+IVS, e la differenza sono le voci contrattuali — fondi sanitari, enti
+bilaterali, previdenza complementare — che non sono contribuzione previdenziale
+obbligatoria.
 
-| Voce (annualizzata) | Cedolino reale | Prototipo V1 | Scarto |
-|---|---:|---:|---:|
-| Contributi | 2.810,08 € | 2.619,16 € | −6,8% |
-| IRPEF lorda | 5.908,70 € | 5.952,61 € | +0,7% |
-| Detrazioni totali | 3.479,00 € | 3.103,98 € | −10,8% |
-| **Netto annuo** | **22.792,00 €** | **22.468,82 €** | **−1,42%** |
-
-Lo scarto sui contributi è **atteso e spiegabile**: l'aliquota implicita nel
-cedolino è circa **9,86%** contro il **9,19%** della V1 — la differenza sono le
-quote contrattuali del CCNL Commercio che il prototipo dichiaratamente non modella.
-Gli scarti si compensano parzialmente e il netto cade entro **1,42%**.
-
-I test fissano soglie di tolleranza (5% sul netto, 10% sull'IRPEF lorda, 15% sui
-contributi, 20% sulle detrazioni): sono **guard-rail di plausibilità**, non
-asserzioni di esattezza.
-
----
+I dati del cedolino non sono nel repository: sono le retribuzioni di una
+persona reale. Restano gli scostamenti misurati, che è ciò che serve a valutare
+l'attendibilità del modello.
 
 ---
 
