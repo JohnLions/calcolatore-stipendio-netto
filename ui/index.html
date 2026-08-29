@@ -26,8 +26,15 @@
     </div>
 
     <div id="pannello-calcolatore" role="tabpanel" aria-labelledby="tab-calcolatore">
-    <form id="form-ral" class="pannello">
+    <!-- novalidate: `step` serve solo a dare l'incremento alle frecce del
+         campo, non deve rendere invalidi gli importi che non sono multipli di
+         100. La validazione la fa app.js, con messaggi specifici. -->
+    <form id="form-ral" class="pannello" novalidate>
         <label for="ral">Retribuzione annua lorda (RAL)</label>
+        <p id="aiuto-ral" class="aiuto aiuto-campo">
+          Solo cifre, senza punti né simboli. Le frecce del campo cambiano
+          l’importo di 100 € alla volta.
+        </p>
         <div class="campo">
           <span class="campo-input">
             <span class="valuta" aria-hidden="true">€</span>
@@ -40,7 +47,7 @@
               step="100"
               inputmode="decimal"
               required
-              aria-describedby="errore"
+              aria-describedby="aiuto-ral errore"
             >
           </span>
           <button type="submit">Calcola</button>

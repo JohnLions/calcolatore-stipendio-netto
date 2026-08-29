@@ -267,11 +267,33 @@ function render(r) {
 form.addEventListener('submit', (evento) => {
   evento.preventDefault();
 
-  const ral = Number(inputRal.value);
   errore.hidden = true;
 
-  if (!Number.isFinite(ral) || ral <= 0) {
-    errore.textContent = 'Inserisci una RAL valida: un numero maggiore di zero.';
+  // `type=number` svuota il valore quando il testo non e' un numero valido:
+  // e' il caso di "35.000" col punto, o di lettere e simboli.
+  const grezzo = inputRal.value.trim();
+  const ral = Number(grezzo);
+
+  // Trappola italiana: "35.000" e' un numero valido per JavaScript, ma vale 35.
+  // Senza questo controllo il calcolatore risponderebbe con il netto di 35 €
+  // invece di segnalare l'errore.
+  const separatoreDiMigliaia = /[.,]/.test(grezzo);
+
+  const problema =
+    separatoreDiMigliaia
+      ? 'Scrivi la RAL senza punti né virgole: 35000 e non 35.000.'
+      : grezzo === ''
+      ? 'Inserisci la RAL. Solo cifre, senza punti né simboli: per esempio 35000.'
+      : !Number.isFinite(ral)
+        ? 'Il valore non è un numero. Scrivi solo cifre, senza punti né simboli: per esempio 35000.'
+        : ral <= 0
+          ? 'La RAL deve essere maggiore di zero.'
+          : ral > 10000000
+            ? 'Importo fuori scala: inserisci una RAL fino a 10.000.000 €.'
+            : null;
+
+  if (problema) {
+    errore.textContent = problema;
     errore.hidden = false;
     risultato.hidden = true;
     return;

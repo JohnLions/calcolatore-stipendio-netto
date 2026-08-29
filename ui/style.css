@@ -550,3 +550,5 @@ tr.subtotale th, tr.subtotale .importo {
 
 table.mini .riga-totale td { border-top: 1px solid var(--testo-tenue); }
 table.mini .importo { text-align: right; }
+
+.aiuto-campo { margin: 0 0 .5rem !important; }
