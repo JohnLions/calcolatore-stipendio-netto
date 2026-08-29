@@ -278,11 +278,19 @@ tr.aggiunta th, tr.aggiunta .importo { color: var(--positivo); font-weight: 600;
      capo, invece, sembrerebbero due gruppi separati. */
   flex-wrap: nowrap;
   overflow-x: auto;
-  overscroll-behavior-x: contain;
+  /* Esplicito: senza, `visible` diventa `auto` sull'altro asse e la barra
+     scorre anche in verticale, sbandando al trascinamento. */
+  overflow-y: hidden;
+  /* Vincola il gesto touch all'asse orizzontale: un trascinamento diagonale
+     scorre la pagina, non la barra. */
+  touch-action: pan-x;
+  overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   gap: .25rem;
-  border-bottom: 1px solid var(--bordo);
+  /* Riga di base come ombra interna e non come bordo: non occupa spazio nel
+     box, quindi non c'e nulla da far scorrere in verticale. */
+  box-shadow: inset 0 -1px 0 var(--bordo);
 }
 
 .tabs::-webkit-scrollbar { display: none; }
@@ -299,7 +307,6 @@ tr.aggiunta th, tr.aggiunta .importo { color: var(--positivo); font-weight: 600;
   border: 0;
   border-bottom: 2px solid transparent;
   border-radius: 0;
-  margin-bottom: -1px;
   cursor: pointer;
 }
 
