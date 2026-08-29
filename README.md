@@ -440,7 +440,7 @@ i risultati divergono, **la ragione sia identificabile**.
 | Calcolatore A | 30.279,50 € | 9,19% | **non calcolate** |
 | Calcolatore B | 30.033,24 € | 9,19% | sì |
 | **Questo prototipo** | **30.034,26 €** | **9,19%** | **sì** |
-| Calcolatore C | 29.958,00 € | 9,49% | aggregate nell'IRPEF |
+| Calcolatore C | 29.958,00 € | 9,49% | sì, presentate aggregate |
 
 Escursione fra i tre esterni: **321,50 €**, lo 0,71% della RAL.
 
@@ -475,7 +475,38 @@ modelli divergono molto più che sul caso standard.
 perché lì il cuneo vale zero.
 
 **C è l'unico esterno completo**, e infatti dista 29 € dal nostro — differenza
-interamente spiegata dalla sua aliquota INPS.
+interamente spiegata dalla sua aliquota INPS. Lo stesso vale a 16.500 € e a
+45.000 €: C ci segue su tutti e tre i livelli, sempre con lo stesso scarto di
+origine.
+
+### RAL 16.500 € — il caso di confine
+
+Il più discriminante dei tre: l'imponibile fiscale è **14.983,65 €**, appena
+**16 € sotto** la soglia dei 15.000 € oltre la quale decade il trattamento
+integrativo.
+
+| Fonte | Netto annuo | Scarto | Causa |
+|---|---:|---:|---|
+| **Questo prototipo** | **15.302,25 €** | — | — |
+| Calcolatore C | 15.262,00 € | −40,25 € | aliquota INPS |
+| Calcolatore A | 14.983,65 € | −318,60 € | si ferma dopo i contributi |
+| Calcolatore B | 14.508,11 € | −794,14 € | somma esente del cuneo |
+
+**Ogni scarto si ricostruisce al centesimo.**
+
+Con B: `15.302,25 − 794,13` (la nostra somma esente) `= 14.508,12`, contro i
+14.508,11 dichiarati. Un centesimo di differenza, e conferma la diagnosi già
+emersa a 12.000 €.
+
+Con A: il suo netto, 14.983,65 €, è **identico al nostro imponibile fiscale**.
+Dichiara "IRPEF: 0 €" a fronte di un'imposta lorda di 3.446 €, e non applica
+addizionali né crediti.
+
+Con C i 40,25 € si scompongono così: paghiamo 49,65 € in meno di contributi
+(9,19% contro 9,49%), ma proprio per questo abbiamo un imponibile più alto e
+paghiamo 11,24 € in più di IRPEF, 2,13 € in più di cuneo e 0,30 € in più di
+addizionale. Somma: 40,24 €. **Nessuna differenza di modello, solo un
+parametro.**
 
 ### La ripartizione sulle mensilità
 
@@ -504,6 +535,10 @@ le sue forme**, e **tredicesima all'aliquota marginale**.
 Questo prototipo coincide con ciascuno di essi nell'intervallo in cui quel
 calcolatore è completo, e dove diverge la causa è sempre riconducibile a una
 voce mancante o a un parametro diverso — mai a un errore di calcolo.
+
+C è quello che ci somiglia di più: modello completo, e uno scarto costante
+dovuto alla sola aliquota contributiva. Resta però la differenza sulla
+ripartizione della tredicesima, che a 45.000 € gli fa invertire il segno.
 
 ## Limiti da tenere a mente
 
