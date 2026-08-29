@@ -502,3 +502,12 @@ table.mini .senza-acapo { white-space: nowrap; }
 .elenco-estensioni > li:last-child { margin-bottom: 0; }
 .elenco-estensioni ul { margin: .5rem 0 0; padding-left: 1.125rem; }
 .elenco-estensioni ul li { margin-bottom: .375rem; }
+
+.formula-inline {
+  margin: .25rem 0 .875rem !important;
+  padding: .5rem .75rem;
+  background: var(--campo);
+  border-left: 3px solid var(--accento);
+  border-radius: 0 6px 6px 0;
+  font-variant-numeric: tabular-nums;
+}
