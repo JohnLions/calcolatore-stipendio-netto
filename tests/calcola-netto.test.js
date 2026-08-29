@@ -238,6 +238,81 @@ test('netto mensile = netto annuale / mensilità', () => {
  * Il test le inchioda entrambe: se ne compare una terza, o se una di queste
  * cambia di posizione o di ampiezza, è una regressione da indagare.
  */
+/**
+ * Le discontinuità note, in ENTRAMBE le direzioni. Il test precedente
+ * cercava solo i cali e non vedeva il salto più grande di tutti: a RAL 9.002
+ * scatta la capienza del trattamento integrativo e il netto sale di 1.200€
+ * per un euro di lordo in più.
+ */
+test('tutti i salti oltre 50€ sono i quattro noti', () => {
+  const attesi = [
+    { ral: 9002, salto: 1200.96, causa: 'scatta la capienza del trattamento integrativo' },
+    { ral: 9361, salto: -152.22, causa: 'scalino cuneo a 8.500€' },
+    { ral: 16519, salto: -129.36, causa: 'decade il trattamento integrativo' },
+    { ral: 25328, salto: -183.4, causa: 'soglia comunale Milano a 23.000€' },
+  ];
+
+  const trovati = [];
+  let precedente = null;
+
+  for (let ral = 1; ral <= 60000; ral += 1) {
+    const { nettoAnnuale } = calcolaNetto(ral);
+    if (precedente !== null && Math.abs(nettoAnnuale - precedente) > 50) {
+      trovati.push({ ral, salto: Number((nettoAnnuale - precedente).toFixed(2)) });
+    }
+    precedente = nettoAnnuale;
+  }
+
+  assert.equal(
+    trovati.length,
+    attesi.length,
+    `salti inattesi: ${JSON.stringify(trovati)}`
+  );
+
+  attesi.forEach((atteso, i) => {
+    assert.equal(trovati[i].ral, atteso.ral, `posizione — ${atteso.causa}`);
+    assert.ok(
+      Math.abs(trovati[i].salto - atteso.salto) < 0.5,
+      `ampiezza — ${atteso.causa}: ${trovati[i].salto} invece di ${atteso.salto}`
+    );
+  });
+});
+
+/**
+ * Sotto i ~12.000€ il netto SUPERA la RAL: i crediti ricevuti (trattamento
+ * integrativo e somma esente) valgono più di quanto viene trattenuto. Non è
+ * un errore, ed è il motivo per cui l'aliquota effettiva risulta negativa.
+ */
+test('sotto i 12.000€ il netto supera la RAL, e l\'aliquota è negativa', () => {
+  const dentro = calcolaNetto(10000);
+  assert.ok(dentro.nettoAnnuale > dentro.ral, 'atteso netto sopra la RAL');
+  assert.ok(dentro.aliquotaEffettiva < 0, 'attesa aliquota effettiva negativa');
+  assert.ok(dentro.trattamentoIntegrativo > 0 && dentro.cuneoSommaEsente > 0);
+
+  // Fuori dalla fascia si torna alla normalità.
+  for (const ral of [9000, 13000, 35000]) {
+    const r = calcolaNetto(ral);
+    assert.ok(r.nettoAnnuale < r.ral, `RAL ${ral}: netto sopra la RAL`);
+    assert.ok(r.aliquotaEffettiva > 0, `RAL ${ral}: aliquota non positiva`);
+  }
+});
+
+test('nessun valore non finito su tutto l\'intervallo utile', () => {
+  for (let ral = 1; ral <= 300000; ral += 97) {
+    const r = calcolaNetto(ral);
+    for (const [campo, valore] of Object.entries(r)) {
+      if (typeof valore === 'number') {
+        assert.ok(
+          Number.isFinite(valore),
+          `RAL ${ral}: campo "${campo}" non finito (${valore})`
+        );
+      }
+    }
+    assert.ok(r.irpefNetta >= 0 && r.contributiInps >= 0 && r.imponibileFiscale >= 0);
+    assert.ok(r.totaleImposte <= r.totaleTrattenute);
+  }
+});
+
 test('le uniche discontinuità del netto sono le due note', () => {
   const attese = [
     { ral: 9361, calo: -152.22, causa: 'scalino cuneo a 8.500€' },
