@@ -421,6 +421,90 @@ asserzioni di esattezza.
 
 ---
 
+---
+
+## Confronto con tre calcolatori online
+
+Oltre al cedolino reale, il modello è stato confrontato con **tre calcolatori
+pubblici** — indicati qui come A, B e C — su due livelli di RAL scelti per
+attraversare regimi diversi. Due di essi arrotondano l'importo inserito, quindi
+i loro risultati si riferiscono a 44.998 € e 11.999 €.
+
+Il punto dell'esercizio non è stabilire chi ha ragione: è verificare che, dove
+i risultati divergono, **la ragione sia identificabile**.
+
+### RAL 45.000 € — il caso standard
+
+| Fonte | Netto annuo | INPS | Addizionali |
+|---|---:|---|---|
+| Calcolatore A | 30.279,50 € | 9,19% | **non calcolate** |
+| Calcolatore B | 30.033,24 € | 9,19% | sì |
+| **Questo prototipo** | **30.034,26 €** | **9,19%** | **sì** |
+| Calcolatore C | 29.958,00 € | 9,49% | aggregate nell'IRPEF |
+
+Escursione fra i tre esterni: **321,50 €**, lo 0,71% della RAL.
+
+**Con B la coincidenza è al centesimo**, e non solo sul totale: contributi
+4.135, IRPEF netta 9.891, addizionale regionale 611, comunale 327 — ogni voce
+combacia a meno dell'arrotondamento all'unità che B applica.
+
+**A è più alto perché non calcola le addizionali.** Il suo diagramma di flusso
+lo mostra apertamente: dalla RAL escono solo INPS e IRPEF, e
+`imponibile 40.865 − IRPEF 10.585 = 30.280`, che è il suo risultato. Mancano i
+938 € di addizionali regionale e comunale.
+
+**C è più basso perché usa un'aliquota contributiva del 9,49%** invece del
+9,19% della Circolare INPS 6/2026: 135 € l'anno di differenza. Non dichiara da
+dove venga quello 0,30% aggiuntivo.
+
+### RAL 12.000 € — dove il modello viene messo alla prova
+
+| Fonte | Netto annuo | Cuneo | Tratt. integrativo | Addizionali |
+|---|---:|---|---|---|
+| Calcolatore C | 11.960,00 € | sì, 576 € | sì, 1.200 € | sì |
+| **Questo prototipo** | **11.989,36 €** | **sì, 577,55 €** | **sì, 1.200 €** | **sì** |
+| Calcolatore B | 11.411,12 € | **no** | sì, 1.200 € | sì |
+| Calcolatore A | 10.897,20 € | **no** | **no** | **no** |
+
+Qui l'escursione sale a **1.092 €**, il 9% della RAL: sotto i 20.000 € i
+modelli divergono molto più che sul caso standard.
+
+**B non modella la somma esente del cuneo.** Ha il trattamento integrativo, ma
+`11.999 − 1.103 − 551 − 134 + 1.200 = 11.411` è esattamente il suo risultato: i
+577 € di somma esente non compaiono. Su 45.000 € l'omissione non era visibile,
+perché lì il cuneo vale zero.
+
+**C è l'unico esterno completo**, e infatti dista 29 € dal nostro — differenza
+interamente spiegata dalla sua aliquota INPS.
+
+### La ripartizione sulle mensilità
+
+Il confronto più istruttivo riguarda la tredicesima. Simulando sul nostro codice
+una ripartizione **proporzionale** dell'IRPEF al posto di quella **marginale**:
+
+| RAL | Questo prototipo | Variante proporzionale | Calcolatore C dichiara |
+|---:|---|---|---|
+| 12.000 € | 945,33 / 645,45 → −31,7% | 945,33 / 645,45 → −31,7% | 943 / 643 |
+| 45.000 € | 2.327,35 / 2.106,09 → **−9,5%** | 2.309,40 / 2.321,48 → **+0,5%** | 2.304 / **2.314** |
+
+C ripartisce l'IRPEF proporzionalmente. Sui redditi bassi non si nota, perché i
+crediti dominano e il segno resta negativo; sui redditi alti, dove di crediti
+non ne restano, il metodo fa **invertire il segno** e la tredicesima risulta
+più alta di una mensilità ordinaria. Che è il contrario di come funziona.
+
+È lo stesso errore commesso nella prima stesura di questo modello, corretto
+perché produceva uno scarto del 7,8% invece del 15-20% indicato dalle fonti.
+
+### Cosa se ne ricava
+
+Nessuno dei tre calcolatori esterni fa contemporaneamente le tre cose che
+contano: **aliquota contributiva da circolare**, **cuneo modellato in entrambe
+le sue forme**, e **tredicesima all'aliquota marginale**.
+
+Questo prototipo coincide con ciascuno di essi nell'intervallo in cui quel
+calcolatore è completo, e dove diverge la causa è sempre riconducibile a una
+voce mancante o a un parametro diverso — mai a un errore di calcolo.
+
 ## Limiti da tenere a mente
 
 È un **prototipo didattico**, non uno strumento di elaborazione paghe. Il numero
