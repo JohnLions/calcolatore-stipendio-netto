@@ -273,12 +273,23 @@ tr.aggiunta th, tr.aggiunta .importo { color: var(--positivo); font-weight: 600;
 
 .tabs {
   display: flex;
-  flex-wrap: wrap;
+  /* Una riga sola: se non ci stanno, le tab scorrono orizzontalmente e
+     l'ultima resta parzialmente visibile a segnalare che esiste. Andando a
+     capo, invece, sembrerebbero due gruppi separati. */
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
   gap: .25rem;
   border-bottom: 1px solid var(--bordo);
 }
 
+.tabs::-webkit-scrollbar { display: none; }
+
 .tab {
+  flex: 0 0 auto;
+  white-space: nowrap;
   padding: .625rem 1rem;
   font: inherit;
   font-size: .9375rem;
@@ -510,4 +521,11 @@ table.mini .senza-acapo { white-space: nowrap; }
   border-left: 3px solid var(--accento);
   border-radius: 0 6px 6px 0;
   font-variant-numeric: tabular-nums;
+}
+
+/* Deve stare DOPO la definizione di .tab, altrimenti la regola base vince
+   a parita di specificita. Il padding ridotto recupera i pixel necessari
+   perche l'ultima tab resti parzialmente visibile invece di uscire del tutto. */
+@media (max-width: 560px) {
+  .tab { padding-left: .5rem; padding-right: .5rem; }
 }
