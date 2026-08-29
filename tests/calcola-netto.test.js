@@ -18,6 +18,7 @@ import { calcolaNetto, MENSILITA, ZONE_TRAPPOLA } from '../calc/calcola-netto.js
 import { calcolaContributiInps, INPS } from '../calc/inps-2026.js';
 import {
   calcolaIrpefLorda,
+  dettaglioScaglioniIrpef,
   detrazioneLavoroDipendente,
   detrazioneCuneo,
   sommaEsenteCuneo,
@@ -130,6 +131,63 @@ test('il netto quadra con la somma delle trattenute', () => {
     );
     assert.ok(Math.abs(r.ral - r.totaleTrattenute - r.nettoAnnuale) < 0.01);
   }
+});
+
+test('il dettaglio per scaglioni somma all\'IRPEF lorda', () => {
+  for (const imponibile of [0, 8000, 15000, 28000, 40864.5, 63429.24, 150000]) {
+    const somma = dettaglioScaglioniIrpef(imponibile).reduce(
+      (a, sc) => a + sc.imposta,
+      0
+    );
+    assert.ok(
+      Math.abs(somma - calcolaIrpefLorda(imponibile)) < 0.01,
+      `imponibile ${imponibile}: scaglioni ${somma} != lorda ${calcolaIrpefLorda(imponibile)}`
+    );
+  }
+});
+
+/**
+ * La tabella di riepilogo mostra una cascata di movimenti che deve sommare
+ * esattamente al netto. Questo test riproduce quella somma sui campi esposti:
+ * se qualcuno cambia la pipeline senza aggiornare la presentazione, la colonna
+ * smetterebbe di quadrare e il test lo intercetta.
+ */
+test('la cascata del riepilogo somma sempre al netto annuale', () => {
+  for (const ral of [8000, 12000, 16500, 25000, 35000, 45000, 70000, 130000]) {
+    const r = calcolaNetto(ral);
+
+    const cascata =
+      r.ral -
+      r.contributiInps -
+      r.irpefLorda +
+      r.detrazioneLavoroDipendente +
+      r.cuneoDetrazione -
+      r.detrazioniNonGodute -
+      r.addizionaleRegionale -
+      r.addizionaleComunale +
+      r.cuneoSommaEsente +
+      r.trattamentoIntegrativo;
+
+    assert.ok(
+      Math.abs(cascata - r.nettoAnnuale) < 0.02,
+      `RAL ${ral}: cascata ${cascata.toFixed(2)} != netto ${r.nettoAnnuale}`
+    );
+  }
+});
+
+test('la cascata quadra anche in caso di incapienza', () => {
+  // Sotto la no tax area le detrazioni superano l'imposta lorda: la quota non
+  // goduta deve comparire come riga a se, altrimenti la somma sfora.
+  const r = calcolaNetto(8000);
+  assert.ok(r.detrazioniNonGodute > 0, 'atteso un caso di incapienza');
+  assert.equal(r.irpefNetta, 0);
+
+  const cascata =
+    r.ral - r.contributiInps - r.irpefLorda + r.detrazioneLavoroDipendente +
+    r.cuneoDetrazione - r.detrazioniNonGodute - r.addizionaleRegionale -
+    r.addizionaleComunale + r.cuneoSommaEsente + r.trattamentoIntegrativo;
+
+  assert.ok(Math.abs(cascata - r.nettoAnnuale) < 0.02);
 });
 
 test('imposte e contributi sono separati e sommano alle trattenute', () => {

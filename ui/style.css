@@ -536,3 +536,17 @@ table.mini .senza-acapo { white-space: nowrap; }
 @media (max-width: 560px) {
   .tab { padding-left: .5rem; padding-right: .5rem; }
 }
+
+/* ---------- Riepilogo e dettaglio del calcolo ---------- */
+
+tr.subtotale th, tr.subtotale .importo {
+  font-weight: 600;
+  border-top: 1px solid var(--testo-tenue);
+}
+
+.blocco-dettaglio { margin-top: 1.25rem; border-top: 1px solid var(--bordo); }
+.blocco-dettaglio > summary { padding-bottom: .5rem; }
+.blocco-dettaglio .scheda-corpo { padding-left: 0; }
+
+table.mini .riga-totale td { border-top: 1px solid var(--testo-tenue); }
+table.mini .importo { text-align: right; }

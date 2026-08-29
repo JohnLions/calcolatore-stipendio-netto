@@ -19,176 +19,190 @@ const eur = new Intl.NumberFormat('it-IT', {
   useGrouping: true,
 });
 
+/** Euro senza centesimi: per le soglie degli scaglioni, dove i decimali sono rumore. */
+const eurTondo = new Intl.NumberFormat('it-IT', {
+  style: 'currency',
+  currency: 'EUR',
+  maximumFractionDigits: 0,
+});
+
+/** Aliquota senza decimali inutili: "23%" invece di "23,00%". */
+const aliquota = (frazione) =>
+  `${(frazione * 100).toLocaleString('it-IT', { maximumFractionDigits: 2 })}%`;
+
 const pct = (n) => `${n.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
 
-/** Righe della tabella di dettaglio, nell'ordine della pipeline di calcolo. */
-function righe(r) {
+/**
+ * Righe del riepilogo: una cascata che parte dalla RAL e arriva al netto.
+ *
+ * Ogni riga e' un MOVIMENTO col proprio segno, tranne quelle marcate come
+ * subtotale. Sommando la colonna si deve ottenere esattamente il netto: e' il
+ * motivo per cui le detrazioni compaiono al loro valore pieno e l'eventuale
+ * quota non goduta per incapienza viene sottratta a parte, invece di essere
+ * silenziosamente scontata dagli importi.
+ */
+function righeRiepilogo(r) {
   return [
-    { tipo: 'base', voce: 'Retribuzione annua lorda (RAL)', valore: r.ral },
-
-    { tipo: 'sezione', voce: '1 · Contributi previdenziali' },
-    {
-      tipo: 'trattenuta',
-      voce: 'Contributi INPS a carico dipendente',
-      nota: '9,19% · +1% oltre 56.224€ · massimale 122.295€',
-      valore: -r.contributiInps,
-    },
-
-    { tipo: 'sezione', voce: '2 · Imponibile fiscale' },
-    {
-      tipo: 'subtotale',
-      voce: 'Imponibile fiscale',
-      nota: 'RAL meno i contributi previdenziali',
-      valore: r.imponibileFiscale,
-    },
-
-    { tipo: 'sezione', voce: '3 · IRPEF' },
-    {
-      tipo: 'neutro',
-      voce: 'IRPEF lorda',
-      nota: 'Scaglioni 23% fino a 28.000€ · 33% fino a 50.000€ · 43% oltre',
-      valore: r.irpefLorda,
-    },
+    { voce: 'Retribuzione annua lorda (RAL)', valore: r.ral },
+    { voce: 'Contributi INPS a carico dipendente', valore: -r.contributiInps },
+    { tipo: 'subtotale', voce: 'Imponibile fiscale', valore: r.imponibileFiscale },
+    { voce: 'IRPEF lorda', valore: -r.irpefLorda },
     {
       tipo: 'detrazione',
       voce: 'Detrazione lavoro dipendente',
-      nota: 'Art. 13 TUIR, considera anno intero lavorato',
-      valore: -r.detrazioneLavoroDipendente,
+      valore: r.detrazioneLavoroDipendente,
+      nascondi: r.detrazioneLavoroDipendente === 0,
     },
     {
       tipo: 'detrazione',
       voce: 'Cuneo fiscale — detrazione',
-      nota:
-        'L. 199/2025 · 1.000€ pieni fino a 32.000€, poi decrescente fino a ' +
-        '40.000€. Sotto i 20.000€ il cuneo cambia forma: non è una detrazione ' +
-        'ma una somma esente che si aggiunge al netto',
-      valore: -r.cuneoDetrazione,
-      nascondi: r.cuneoDetrazione === 0 && r.cuneoSommaEsente > 0,
+      valore: r.cuneoDetrazione,
+      nascondi: r.cuneoDetrazione === 0,
     },
     {
-      tipo: 'trattenuta',
-      voce: 'IRPEF netta',
-      nota: 'IRPEF lorda meno le detrazioni, con minimo a zero',
-      valore: -r.irpefNetta,
+      voce: 'Detrazioni non utilizzate',
+      nota: 'Incapienza: l’imposta lorda non basta ad assorbirle e l’eccedenza si perde',
+      valore: -r.detrazioniNonGodute,
+      nascondi: r.detrazioniNonGodute === 0,
     },
-
-    { tipo: 'sezione', voce: '4 · Addizionali locali' },
+    { voce: 'Addizionale regionale — Lombardia', valore: -r.addizionaleRegionale },
     {
-      tipo: 'trattenuta',
-      voce: 'Addizionale regionale — Lombardia',
-      nota: 'Per scaglioni: 1,23% / 1,58% / 1,72% / 1,73% (soglie 15k · 28k · 50k)',
-      valore: -r.addizionaleRegionale,
-    },
-    {
-      tipo: 'trattenuta',
       voce: 'Addizionale comunale — Milano',
-      nota:
-        r.addizionaleComunale === 0
-          ? 'Esente: imponibile pari o inferiore a 23.000€'
-          : '0,80% · superati i 23.000€ si paga sull’intero imponibile, non solo sulla parte eccedente',
+      nota: r.addizionaleComunale === 0 ? 'Esente sotto i 23.000€ di imponibile' : null,
       valore: -r.addizionaleComunale,
     },
-
-    { tipo: 'sezione', voce: '5 · Risultato' },
     {
-      tipo: 'aggiunta',
-      voce: 'Trattamento integrativo',
-      nota:
-        'Ex bonus Renzi · fino a 1.200€ per imponibili sotto i 15.000€, se ' +
-        'l’imposta lorda è capiente. È un credito, si cumula con il cuneo.',
-      valore: r.trattamentoIntegrativo,
-      nascondi: r.trattamentoIntegrativo === 0,
-    },
-    {
-      tipo: 'aggiunta',
+      tipo: 'detrazione',
       voce: 'Cuneo fiscale — somma esente',
-      nota:
-        'L. 199/2025 · fino a 20.000€: 7,1% / 5,3% / 4,8% sull’intero imponibile. ' +
-        'Non è una detrazione: è una somma non tassata che si aggiunge al netto.',
       valore: r.cuneoSommaEsente,
       nascondi: r.cuneoSommaEsente === 0,
     },
     {
-      tipo: 'trattenuta',
-      voce: 'Totale imposte',
-      nota: 'IRPEF netta + addizionali. I contributi previdenziali non sono imposte',
-      valore: -r.totaleImposte,
-    },
-    {
-      tipo: 'trattenuta',
-      voce: 'Totale trattenute',
-      nota:
-        'Contributi + IRPEF netta + addizionali' +
-        (r.cuneoSommaEsente + r.trattamentoIntegrativo > 0
-          ? `. Al netto dei crediti in busta il prelievo effettivo è il ${pct(r.aliquotaEffettiva)} della RAL`
-          : ` · ${pct(r.aliquotaEffettiva)} della RAL`),
-      valore: -r.totaleTrattenute,
+      tipo: 'detrazione',
+      voce: 'Trattamento integrativo',
+      valore: r.trattamentoIntegrativo,
+      nascondi: r.trattamentoIntegrativo === 0,
     },
     { tipo: 'totale', voce: 'Netto annuale', valore: r.nettoAnnuale },
-    { tipo: 'sezione', voce: `6 · Ripartizione su ${r.mensilita} mensilità` },
-    {
-      tipo: 'totale',
-      voce:
-        r.mensilitaAggiuntive > 0
-          ? `Mensilità ordinaria (× ${r.mensilitaOrdinarie})`
-          : `Netto mensile (× ${r.mensilita})`,
-      nota:
-        r.mensilitaAggiuntive > 0
-          ? 'Porta detrazioni, cuneo, trattamento integrativo e addizionali'
-          : null,
-      valore: r.nettoMensileOrdinario,
-    },
-    {
-      tipo: 'totale',
-      voce:
-        r.mensilitaAggiuntive === 1
-          ? 'Tredicesima (× 1)'
-          : `Mensilità aggiuntiva (× ${r.mensilitaAggiuntive})`,
-      nota:
-        'Nessuna detrazione, nessun credito, nessuna addizionale: si somma in ' +
-        'cima al reddito e sconta l’aliquota marginale',
-      valore: r.nettoMensileAggiuntivo ?? 0,
-      nascondi: r.mensilitaAggiuntive === 0,
-    },
-    {
-      tipo: 'neutro',
-      voce: 'Media su tutte le mensilità',
-      nota: 'Netto annuale diviso le mensilità: non corrisponde a nessuna busta paga reale',
-      valore: r.nettoMensile,
-      nascondi: r.mensilitaAggiuntive === 0,
-    },
-
-    { tipo: 'sezione', voce: 'Voce informativa (non inclusa nel netto)' },
     {
       tipo: 'info',
       voce: 'TFR maturato nell’anno',
-      nota: 'RAL / 13,5 · accantonato, non erogato in busta paga',
+      nota: 'Accantonato, non incluso nel netto',
       valore: r.tfrAnnuo,
     },
-  ];
+  ].filter((riga) => !riga.nascondi);
 }
 
-function render(r) {
-  const corpo = righe(r)
-    .filter((riga) => !riga.nascondi)
+/** Tabella del riepilogo. */
+function tabellaRiepilogo(r) {
+  const corpo = righeRiepilogo(r)
     .map((riga) => {
-      if (riga.tipo === 'sezione') {
-        return `<tr class="sezione"><th colspan="2">${riga.voce}</th></tr>`;
-      }
-
-      // `+ 0` normalizza lo zero negativo: senza, una voce esente a -0
-      // verrebbe formattata come "-0,00 €".
+      // `+ 0` normalizza lo zero negativo, che si formatterebbe come "-0,00 €".
       const valore = riga.valore + 0;
       const segno = valore < 0 ? 'negativo' : '';
       const nota = riga.nota ? `<span class="nota">${riga.nota}</span>` : '';
 
-      return `<tr class="${riga.tipo}">
+      return `<tr class="${riga.tipo ?? ''}">
         <th scope="row">${riga.voce}${nota}</th>
         <td class="importo ${segno}">${eur.format(valore)}</td>
       </tr>`;
     })
     .join('');
 
+  return `<table class="dettaglio">
+    <caption>Riepilogo del calcolo</caption>
+    <thead><tr><th scope="col">Voce</th><th scope="col">Importo</th></tr></thead>
+    <tbody>${corpo}</tbody>
+  </table>`;
+}
+
+/** Tabella di dettaglio: come si formano IRPEF lorda, detrazioni e crediti. */
+function tabellaDettaglio(r) {
+  const scaglioni = r.scaglioniIrpef
+    .map((sc) => {
+      const fascia =
+        sc.a === null || !Number.isFinite(sc.a)
+          ? `oltre ${eurTondo.format(sc.da)}`
+          : sc.da === 0
+            ? `fino a ${eurTondo.format(sc.a)}`
+            : `da ${eurTondo.format(sc.da)} a ${eurTondo.format(sc.a)}`;
+
+      return `<tr>
+        <td><strong>${aliquota(sc.aliquota)}</strong> ${fascia}
+          <span class="nota">Quota tassata: ${eur.format(sc.base)}</span></td>
+        <td class="importo">${eur.format(sc.imposta)}</td>
+      </tr>`;
+    })
+    .join('');
+
+  const crediti = [
+    {
+      voce: 'Detrazione lavoro dipendente',
+      nota: 'Art. 13 TUIR, considera anno intero lavorato',
+      valore: r.detrazioneLavoroDipendente,
+    },
+    {
+      voce: 'Cuneo fiscale — detrazione',
+      nota: 'Oltre i 20.000€ di imponibile',
+      valore: r.cuneoDetrazione,
+    },
+    {
+      voce: 'Cuneo fiscale — somma esente',
+      nota: 'Fino a 20.000€ di imponibile: si aggiunge al netto, non riduce l’imposta',
+      valore: r.cuneoSommaEsente,
+    },
+    {
+      voce: 'Trattamento integrativo',
+      nota: 'Credito fino a 1.200€ per imponibili sotto i 15.000€',
+      valore: r.trattamentoIntegrativo,
+    },
+  ]
+    .filter((c) => c.valore > 0)
+    .map(
+      (c) => `<tr>
+        <td>${c.voce}<span class="nota">${c.nota}</span></td>
+        <td class="importo">${eur.format(c.valore)}</td>
+      </tr>`
+    )
+    .join('');
+
+  const totaleCrediti =
+    r.detrazioneLavoroDipendente +
+    r.cuneoDetrazione +
+    r.cuneoSommaEsente +
+    r.trattamentoIntegrativo;
+
+  return `
+    <p class="sotto-titolo">IRPEF per scaglioni</p>
+    <table class="mini">
+      <thead><tr><th scope="col">Scaglione</th><th scope="col">Imposta</th></tr></thead>
+      <tbody>
+        ${scaglioni}
+        <tr class="riga-totale">
+          <td><strong>IRPEF lorda</strong></td>
+          <td class="importo"><strong>${eur.format(r.irpefLorda)}</strong></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="sotto-titolo">Detrazioni e crediti applicati</p>
+    ${
+      totaleCrediti === 0
+        ? '<p class="nota-blocco">Nessuna detrazione o credito spettante a questo livello di reddito.</p>'
+        : `<table class="mini">
+             <thead><tr><th scope="col">Voce</th><th scope="col">Importo</th></tr></thead>
+             <tbody>
+               ${crediti}
+               <tr class="riga-totale">
+                 <td><strong>Totale</strong></td>
+                 <td class="importo"><strong>${eur.format(totaleCrediti)}</strong></td>
+               </tr>
+             </tbody>
+           </table>`
+    }`;
+}
+
+function render(r) {
   const avvisi = r.warnings.length
     ? `<div class="avvisi" role="status">
          <strong>Attenzione — zona trappola</strong>
@@ -239,16 +253,16 @@ function render(r) {
     </div>
 
     ${avvisi}
-    <table class="dettaglio">
-      <caption>Dettaglio di tutte le voci trattenute</caption>
-      <thead>
-        <tr><th scope="col">Voce</th><th scope="col">Importo</th></tr>
-      </thead>
-      <tbody>${corpo}</tbody>
-    </table>
+    ${tabellaRiepilogo(r)}
+
+    <details class="scheda blocco-dettaglio">
+      <summary>Dettaglio del calcolo</summary>
+      <div class="scheda-corpo">${tabellaDettaglio(r)}</div>
+    </details>
   `;
   risultato.hidden = false;
 }
+
 
 form.addEventListener('submit', (evento) => {
   evento.preventDefault();

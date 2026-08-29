@@ -18,6 +18,7 @@
 import { calcolaContributiInps } from './inps-2026.js';
 import {
   calcolaIrpefLorda,
+  dettaglioScaglioniIrpef,
   detrazioneLavoroDipendente,
   detrazioneCuneo,
   sommaEsenteCuneo,
@@ -158,6 +159,13 @@ export function calcolaNetto(ral, opzioni = {}) {
     contributiInps: round2(contributiInps),
     imponibileFiscale: round2(imponibileFiscale),
     irpefLorda: round2(irpefLorda),
+    scaglioniIrpef: dettaglioScaglioniIrpef(imponibileFiscale).map((sc) => ({
+      da: sc.da,
+      a: sc.a,
+      aliquota: sc.aliquota,
+      base: round2(sc.base),
+      imposta: round2(sc.imposta),
+    })),
     detrazioneLavoroDipendente: round2(detrazione),
     cuneoDetrazione: round2(cuneoDetrazione),
     cuneoSommaEsente: round2(cuneoSommaEsente),

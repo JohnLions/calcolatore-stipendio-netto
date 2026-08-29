@@ -42,6 +42,38 @@ export function calcolaIrpefLorda(imponibile) {
 }
 
 /**
+ * Ripartizione dell'IRPEF lorda per scaglione.
+ *
+ * Espone i valori intermedi che `calcolaIrpefLorda` calcola e scarta: serve
+ * solo a mostrare il dettaglio in interfaccia. La somma delle imposte per
+ * scaglione coincide per costruzione con `calcolaIrpefLorda(imponibile)`, e un
+ * test lo verifica.
+ *
+ * @param {number} imponibile imponibile fiscale in euro
+ * @returns {Array<{da:number, a:number, aliquota:number, base:number, imposta:number}>}
+ */
+export function dettaglioScaglioniIrpef(imponibile) {
+  const dettaglio = [];
+  let sogliaPrecedente = 0;
+
+  for (const scaglione of IRPEF_SCAGLIONI) {
+    if (imponibile <= sogliaPrecedente) break;
+
+    const baseTassata = Math.min(imponibile, scaglione.fino) - sogliaPrecedente;
+    dettaglio.push({
+      da: sogliaPrecedente,
+      a: scaglione.fino,
+      aliquota: scaglione.aliquota,
+      base: baseTassata,
+      imposta: baseTassata * scaglione.aliquota,
+    });
+    sogliaPrecedente = scaglione.fino;
+  }
+
+  return dettaglio;
+}
+
+/**
  * Detrazione per redditi da lavoro dipendente — art. 13, c. 1 TUIR.
  *
  * Formula a fasce:
