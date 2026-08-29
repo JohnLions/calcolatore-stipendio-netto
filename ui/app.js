@@ -212,7 +212,7 @@ function render(r) {
 
   risultato.innerHTML = `
     <div class="sintesi">
-      <div class="kpi">
+      <div class="kpi kpi-primario">
         <span class="kpi-label">Netto annuale</span>
         <span class="kpi-valore">${eur.format(r.nettoAnnuale)}</span>
       </div>

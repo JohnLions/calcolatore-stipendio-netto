@@ -8,7 +8,10 @@
   --accento: #1a56db;
   --negativo: #b42318;
   --positivo: #027a48;
-  --info: #6941c6;
+  /* Il colore della risposta: tinta il netto annuale e l'ultima riga della
+     cascata, i due punti in cui compare il numero che si sta cercando. */
+  --netto-sfondo: #f0fdf6;
+  --netto-bordo: #b7e4cd;
   --raggio: 10px;
 }
 
@@ -145,6 +148,16 @@ button:focus-visible { outline: 2px solid var(--testo); outline-offset: 2px; }
   border-radius: var(--raggio);
 }
 
+/* La card del netto annuale e' la risposta: prende piu peso delle altre due,
+   che restano di supporto. */
+.kpi-primario {
+  background: var(--netto-sfondo);
+  border-color: var(--netto-bordo);
+}
+
+.kpi-primario .kpi-label { color: var(--positivo); font-weight: 600; }
+.kpi-primario .kpi-valore { font-size: 1.75rem; letter-spacing: -.02em; }
+
 .kpi-label {
   font-size: .75rem;
   line-height: 1.25;
@@ -186,7 +199,11 @@ button:focus-visible { outline: 2px solid var(--testo); outline-offset: 2px; }
 .dettaglio caption {
   padding-bottom: .75rem;
   text-align: left;
-  font-weight: 600;
+  font-size: .8125rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--accento);
 }
 
 .dettaglio thead th {
@@ -227,31 +244,27 @@ button:focus-visible { outline: 2px solid var(--testo); outline-offset: 2px; }
 
 .dettaglio tbody tr { border-bottom: 1px solid #f0f2f5; }
 
-tr.sezione th {
-  padding: 1.25rem .75rem .375rem;
-  font-size: .75rem;
-  font-weight: 700;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  color: var(--accento);
-}
-
-tr.sezione { border-bottom: 1px solid var(--bordo) !important; }
-
 .importo.negativo { color: var(--negativo); }
 tr.detrazione .importo { color: var(--positivo); }
 tr.subtotale th, tr.subtotale .importo { font-weight: 600; }
 
 tr.totale {
-  background: #f8fafc;
+  background: var(--netto-sfondo);
 }
 
 tr.totale th, tr.totale .importo {
+  padding-top: .875rem;
+  padding-bottom: .875rem;
   font-weight: 700;
   font-size: 1.0625rem;
+  border-top: 1px solid var(--netto-bordo);
+  border-bottom: 1px solid var(--netto-bordo);
 }
 
-tr.info th, tr.info .importo { color: var(--info); }
+/* Voce informativa: non entra nel netto, quindi arretra invece di aggiungere
+   un colore. Rosso esce, verde resta: il TFR non e' ne l'uno ne l'altro. */
+tr.info th, tr.info .importo { color: var(--testo-tenue); }
+tr.info th { font-weight: 400; }
 
 @media (max-width: 560px) {
   h1 { font-size: 1.625rem; }
@@ -265,9 +278,6 @@ tr.info th, tr.info .importo { color: var(--info); }
   .campo button { flex-basis: 100%; }
   .pannello { padding: 1.125rem; }
 }
-
-/* La somma esente si aggiunge al netto: va distinta dalle trattenute. */
-tr.aggiunta th, tr.aggiunta .importo { color: var(--positivo); font-weight: 600; }
 
 /* ---------- Tab ---------- */
 
@@ -479,7 +489,9 @@ table.mini .senza-acapo { white-space: nowrap; }
 /* ---------- Sintesi: tre riquadri primari ---------- */
 
 .kpi-dettaglio {
-  margin-top: .375rem;
+  margin-top: .5rem;
+  padding-top: .5rem;
+  border-top: 1px solid var(--bordo);
   font-size: .75rem;
   line-height: 1.4;
   color: var(--testo-tenue);
@@ -493,7 +505,7 @@ table.mini .senza-acapo { white-space: nowrap; }
   display: flex;
   flex-wrap: wrap;
   gap: .5rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .badge {
@@ -503,8 +515,8 @@ table.mini .senza-acapo { white-space: nowrap; }
   padding: .375rem .75rem;
   font-size: .8125rem;
   color: var(--testo-tenue);
-  background: var(--pannello);
-  border: 1px solid var(--bordo);
+  background: var(--campo);
+  border: 1px solid transparent;
   border-radius: 999px;
 }
 
